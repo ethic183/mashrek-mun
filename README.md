@@ -1,8 +1,27 @@
-# Mashrek MUN ’26 — Website
+# Mashrek MUN ’26 Website
 
 Official website of Mashrek Model United Nations 2026, *The Narratives of Power*.
 
 It's a fully static site: plain HTML, CSS and a small JavaScript file. It needs no database or server code, so it can be hosted anywhere for free.
+
+## Live site
+
+**https://ethic183.github.io/mashrek-mun/** (hosted free on GitHub Pages from the `main` branch of
+https://github.com/ethic183/mashrek-mun).
+
+### Publishing an update
+1. Edit `config.json` (or add a guide), then rebuild:
+   ```
+   python3 build.py
+   ```
+2. Upload the change:
+   ```
+   git add -A && git commit -m "Describe the change" && git push
+   ```
+3. GitHub republishes the site automatically in about a minute.
+
+Using a custom domain later? Set it in the repository's **Settings → Pages → Custom domain**, then change
+`"site_url"` in `config.json` to the new address and rebuild.
 
 ## Folder contents
 
@@ -78,7 +97,7 @@ Pick either option, or use both:
 The home page's "Theme Reveal" section plays `assets/theme-film.mp4`. To replace it, overwrite that file, or change
 `"theme_video"` / `"theme_video_poster"` in `config.json`. Set `"theme_video": ""` to remove the section.
 
-The film contains third-party news footage (CBS News, Framepool, and others). It's shown click-to-play with a content note.
+The film contains third-party news footage (CBS News, Framepool, and others). It plays muted while on screen (with Mute and Pause buttons) and has a content note.
 If the organisers prefer not to host that footage, remove the section and link to the Instagram post instead.
 
 ### Your domain
