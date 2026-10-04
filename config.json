@@ -1,0 +1,103 @@
+{
+  "_help": "Edit this file, then run: python3 build.py (see README.md)",
+
+  "site_url": "https://ethic183.github.io/mashrek-mun",
+  "name": "Mashrek MUN",
+  "full_name": "Mashrek Model United Nations",
+  "year": "2026",
+  "short": "MMUN ’26",
+  "theme": "The Narratives of Power",
+  "description": "Mashrek Model United Nations 2026. Official theme: The Narratives of Power. Committees, study guides, delegate applications and schedule.",
+
+  "contact": {
+    "email": "",
+    "instagram": "mmun.official",
+    "phone": "",
+    "location": [
+      "Day 1: Mashrek International School",
+      "Days 2 & 3: The Ritz-Carlton"
+    ]
+  },
+
+  "applications": [],
+
+  "schedule": [],
+
+  "theme_video": "assets/theme-film.mp4",
+  "theme_video_poster": "assets/theme-film-poster.jpg",
+
+  "committees": [
+    {
+      "slug": "general-assembly",
+      "abbr": "GA",
+      "name": "General Assembly",
+      "level": "Beginner 1",
+      "tier": "Beginner",
+      "blurb": "The main deliberative body of the UN, where every Member State has an equal voice.",
+      "guide_url": ""
+    },
+    {
+      "slug": "human-rights-council",
+      "abbr": "HRC",
+      "name": "Human Rights Council",
+      "level": "Beginner 2",
+      "tier": "Beginner",
+      "blurb": "The intergovernmental body responsible for promoting and protecting human rights around the world.",
+      "guide_url": ""
+    },
+    {
+      "slug": "world-health-organization",
+      "abbr": "WHO",
+      "name": "World Health Organization",
+      "level": "Beginner 3",
+      "tier": "Beginner",
+      "blurb": "The UN agency directing and coordinating international work on public health.",
+      "guide_url": ""
+    },
+    {
+      "slug": "economic-and-social-council",
+      "abbr": "ECOSOC",
+      "name": "Economic and Social Council",
+      "level": "Intermediate",
+      "tier": "Intermediate",
+      "blurb": "The UN’s central platform for economic, social and environmental policy and sustainable development.",
+      "guide_url": ""
+    },
+    {
+      "slug": "model-arab-league",
+      "abbr": "MAL",
+      "name": "Model Arab League",
+      "level": "Intermediate",
+      "tier": "Intermediate",
+      "blurb": "A simulation of the League of Arab States, debating the region’s political, economic and social questions.",
+      "guide_url": ""
+    },
+    {
+      "slug": "international-court-of-justice",
+      "abbr": "ICJ",
+      "name": "International Court of Justice",
+      "level": "Expert 1",
+      "tier": "Expert",
+      "blurb": "The principal judicial organ of the UN, settling legal disputes between States.",
+      "guide_url": ""
+    },
+    {
+      "slug": "security-council",
+      "abbr": "UNSC",
+      "name": "Security Council",
+      "level": "Expert 2",
+      "tier": "Expert",
+      "blurb": "Fifteen members charged with the maintenance of international peace and security.",
+      "guide_url": ""
+    },
+    {
+      "slug": "global-press-council",
+      "abbr": "GPC",
+      "name": "Global Press Council",
+      "level": "Special",
+      "tier": "Special",
+      "blurb": "The conference’s press corps, reporting on and questioning the narrative of MMUN ’26.",
+      "guide_url": ""
+    }
+  ]
+}
