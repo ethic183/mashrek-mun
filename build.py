@@ -297,6 +297,60 @@ def pending(eyebrow, title, body, buttons=""):
 
 # ------------------------------------------------------------------ pages
 
+def hemicycle_svg():
+    """A parliament-style semicircle of seats, split into one block per committee."""
+    import math
+    cx, cy, rows, r0, r1, seat = 300, 296, 8, 112, 270, 6.4
+    seats = []
+    for i in range(rows):
+        r = r0 + (r1 - r0) * i / (rows - 1)
+        n = int(round(math.pi * r / 18.5))
+        for j in range(n):
+            a = math.pi * (j + 0.5) / n          # 0..pi, left to right
+            seats.append((a, cx - r * math.cos(a), cy - r * math.sin(a)))
+    seats.sort(key=lambda s: s[0])
+    per = len(seats) / len(C)
+    out = []
+    for k, (a, x, y) in enumerate(seats):
+        g = min(int(k / per), len(C) - 1)
+        tier = C[g]["tier"].lower()
+        out.append(f'<circle class="seat t-{tier}" data-g="{g}" cx="{x:.1f}" cy="{y:.1f}" r="{seat}" style="--d:{k}"/>')
+    names = "".join(f'<li data-g="{i}">{esc(c["abbr"])}</li>' for i, c in enumerate(C))
+    return (f'<figure class="hemicycle reveal" aria-label="Seating chart of the {len(C)} committees">'
+            f'<svg viewBox="0 0 600 310" role="img" aria-hidden="true">{"".join(out)}'
+            f'<text class="hc-count" x="300" y="268" text-anchor="middle">{len(C)}</text>'
+            f'<text class="hc-label" x="300" y="294" text-anchor="middle">Committees</text></svg>'
+            f'</figure>')
+
+
+PROCESS = [
+    ("Roll Call", "The chair confirms which delegations are present and voting."),
+    ("Opening Speeches", "Each delegate sets out their country’s position on the topic."),
+    ("Caucus", "Moderated and unmoderated caucuses to debate, negotiate and form blocs."),
+    ("Working Papers", "Blocs turn their ideas into a draft resolution with sponsors and signatories."),
+    ("Amendments", "Delegates refine the text clause by clause, friendly or unfriendly."),
+    ("Voting", "The committee votes. With a majority, the resolution passes."),
+]
+
+GLOSSARY = [
+    ("Point of Order", "Raised when a delegate believes the rules of procedure are not being followed correctly."),
+    ("Point of Personal Privilege", "Raised when personal discomfort affects participation, for example not being able to hear a speaker."),
+    ("Point of Information", "A question to a speaker about their speech, when the speaker has agreed to take questions."),
+    ("Moderated Caucus", "Structured debate on a sub-topic, with a set speaking time and the chair calling on speakers."),
+    ("Unmoderated Caucus", "An informal break from formal debate where delegates move freely to negotiate and write."),
+    ("Right of Reply", "A request to respond when a delegate feels their country’s integrity has been insulted by another speaker."),
+    ("Yield", "How a speaker gives away remaining time: to the chair, to another delegate, or to points of information."),
+    ("Draft Resolution", "A formal document of preambulatory and operative clauses proposing solutions, which the committee votes on."),
+]
+
+# National flags (from the MIT-licensed flag-icons set, stored in assets/flags)
+FLAGS = [("jo", "Jordan"), ("us", "United States"), ("cn", "China"), ("fr", "France"), ("gb", "United Kingdom"),
+         ("ru", "Russia"), ("eg", "Egypt"), ("br", "Brazil"), ("in", "India"), ("jp", "Japan"), ("sa", "Saudi Arabia"),
+         ("de", "Germany"), ("za", "South Africa"), ("ae", "United Arab Emirates"), ("ca", "Canada"), ("ng", "Nigeria"),
+         ("lb", "Lebanon"), ("kr", "South Korea"), ("tr", "Türkiye"), ("ma", "Morocco"), ("au", "Australia"),
+         ("it", "Italy"), ("id", "Indonesia"), ("ar", "Argentina"), ("ke", "Kenya"), ("pk", "Pakistan")]
+
+
 def build_home():
     open_apps = [a for a in CFG["applications"] if a.get("url")]
     released = sum(1 for c in C if has_guide(c))
@@ -304,22 +358,22 @@ def build_home():
     if isinstance(venues, str):
         venues = [venues]
 
-    rows = "".join(f"""<li><a class="c-row" href="{c['slug']}.html">
+    rows = "".join(f"""<li><a class="c-row" data-g="{i}" href="{c['slug']}.html">
       <span class="c-abbr">{esc(c['abbr'])}</span>
       <span class="c-name">{esc(c['name'])}</span>
       <span class="c-level">{esc(c['level'])}</span>
       <span class="c-go" aria-hidden="true">→</span>
-    </a></li>""" for c in C)
+    </a></li>""" for i, c in enumerate(C))
 
     facts = "".join(
         f"<li><b>{esc(v.split(':', 1)[0].strip())}</b>{esc(v.split(':', 1)[1].strip()) if ':' in v else ''}</li>"
         for v in venues)
     facts += (f"<li><b>Delegates</b>{'Applications open' if open_apps else 'Applications opening soon'}</li>")
 
-    phrases = [("The Narratives of Power", ""), ("Behind every headline is a choice", "m"),
-               ("Question who holds the pen", ""), ("Power decides what the world sees", "m")]
-    one = "".join(f'<span class="{c}">{esc(t)}</span><i>✦</i>' for t, c in phrases)
-    marquee = f'<div class="marquee" aria-hidden="true"><div class="marquee-track">{one}{one}</div></div>'
+    one = "".join(f'<span class="fl"><img src="assets/flags/{code}.svg" width="44" height="33" alt="" loading="lazy" decoding="async">{esc(name)}</span>'
+                  for code, name in FLAGS)
+    marquee = (f'<div class="marquee flags" role="img" aria-label="Flags of {len(FLAGS)} nations">'
+               f'<div class="marquee-track">{one}{one}</div></div>')
 
     film = ""
     if CFG.get("theme_video"):
@@ -444,8 +498,19 @@ def build_home():
     <div class="section-head center reveal">
       <h2 class="split">Choose your room.</h2>
     </div>
+    {hemicycle_svg()}
     <ul class="c-list" data-stagger>{rows}</ul>
     <p class="c-foot reveal"><a href="guides.html">{released} of {len(C)} study guides released →</a></p>
+  </div>
+</section>
+
+<section class="process" aria-labelledby="process-title">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <h2 class="split" id="process-title">The path to a resolution.</h2>
+      <p>How every committee session unfolds, from the first roll call to the final vote.</p>
+    </div>
+    <ol class="p-track" data-stagger>{"".join(f'<li><span class="p-num">{i + 1:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for i, (t, d) in enumerate(PROCESS))}</ol>
   </div>
 </section>
 
@@ -546,8 +611,22 @@ def build_guides():
                     f'<span class="actions">{"".join(actions)}</span></li>')
     top = page_head("Preparation", "Study Guides",
                     "Background guides for each committee, released as the chairs finalise them.", seal=False)
+    terms = "".join(
+        f'<li><button class="term" type="button" aria-expanded="false" aria-controls="term-{i}">'
+        f'<span class="t-name">{esc(t)}</span><span class="t-hint" aria-hidden="true">Tap to reveal</span></button>'
+        f'<p class="t-def" id="term-{i}">{esc(d)}</p></li>'
+        for i, (t, d) in enumerate(GLOSSARY))
+    glossary = f"""<section class="glossary" aria-labelledby="glossary-title">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <h2 class="split" id="glossary-title">Speak the language of the floor.</h2>
+      <p>Eight terms every delegate hears in committee. Tap a placard to see what it means.</p>
+    </div>
+    <ul class="g-terms" data-stagger>{terms}</ul>
+  </div>
+</section>"""
     page("guides.html", "Study Guides", f"Study guides for every committee at {CFG['full_name']} {CFG['year']}.",
-         "guides", top + f'\n<section><div class="wrap narrow"><ul class="link-list reveal">{"".join(rows)}</ul></div></section>')
+         "guides", top + f'\n<section><div class="wrap narrow"><ul class="link-list reveal">{"".join(rows)}</ul></div></section>\n' + glossary)
 
 
 def build_schedule():

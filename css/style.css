@@ -885,3 +885,95 @@ html.intro::after {
 .film-screen.img-mode .film-img { display: block; }
 .film-screen.img-mode.img-paused .film-img { visibility: hidden; }
 
+
+/* ==========================================================
+   Parliament seating chart (Committees section)
+   ========================================================== */
+.hemicycle { margin: 0 auto clamp(40px, 5vw, 64px); max-width: 640px; }
+.hemicycle svg { display: block; width: 100%; height: auto; overflow: visible; }
+.seat {
+  opacity: 0; transform: scale(.2); transform-box: fill-box; transform-origin: center;
+  transition: transform .5s var(--ease), opacity .5s var(--ease), fill .25s ease;
+  transition-delay: calc(var(--d) * 3ms);
+}
+.seat.t-beginner { fill: #8fa3cf; }
+.seat.t-intermediate { fill: #3a5ea8; }
+.seat.t-expert { fill: var(--navy-800); }
+.seat.t-special { fill: var(--red); }
+.hemicycle.in .seat { opacity: 1; transform: none; }
+.hemicycle.hl .seat { opacity: .16; transition-delay: 0s; }
+.hemicycle.hl .seat.on { opacity: 1; fill: var(--red); transform: scale(1.12); }
+.hc-count { font-family: var(--display); font-weight: 900; font-size: 62px; fill: var(--ink); transition: opacity .2s; }
+.hc-label { font-family: var(--caps); font-weight: 700; font-size: 14px; letter-spacing: .26em; text-transform: uppercase; fill: var(--muted); }
+.hemicycle.hl .hc-count { font-size: 44px; fill: var(--red); }
+
+/* ==========================================================
+   The path to a resolution
+   ========================================================== */
+.process { background: var(--white); border-top: 1px solid var(--line); }
+.p-track { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(6, 1fr); }
+.p-track::before, .p-track::after { content: ""; position: absolute; left: 28px; right: 28px; top: 27px; height: 2px; }
+.p-track::before { background: var(--line); }
+.p-track::after { background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform 1.8s var(--ease) .2s; }
+.p-track.in::after { transform: scaleX(1); }
+.p-track li { position: relative; padding-right: 18px; }
+.p-num {
+  position: relative; z-index: 1; display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 24px;
+  border-radius: 50%; background: var(--white); border: 2px solid var(--ink);
+  font-family: var(--display); font-style: italic; font-size: 19px; color: var(--ink);
+  transition: background-color .3s, color .3s, border-color .3s;
+}
+.p-track li:hover .p-num { background: var(--navy); border-color: var(--navy); color: #fff; }
+.p-track h3 { font-size: 22px; margin-bottom: 8px; }
+.p-track p { font-size: 16px; color: var(--muted); line-height: 1.55; margin: 0; }
+@media (max-width: 900px) {
+  .p-track { grid-template-columns: 1fr; gap: 30px; }
+  .p-track::before, .p-track::after { left: 27px; right: auto; top: 28px; bottom: 28px; width: 2px; height: auto; }
+  .p-track::after { transform: scaleY(0); transform-origin: top; }
+  .p-track.in::after { transform: scaleY(1); }
+  .p-track li { padding: 0 0 0 82px; min-height: 56px; }
+  .p-num { position: absolute; left: 0; top: 0; margin: 0; }
+}
+
+/* ==========================================================
+   Delegate glossary (Guides page)
+   ========================================================== */
+.glossary { background: var(--paper); border-top: 1px solid var(--line); }
+.g-terms { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.g-terms li { position: relative; }
+.term {
+  all: unset; box-sizing: border-box; width: 100%; height: 170px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 18px; text-align: center;
+  background: #fff; border-bottom: 4px solid var(--navy); box-shadow: 0 20px 34px -24px rgba(7,15,36,.45);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.term:hover { transform: translateY(-4px); box-shadow: 0 28px 40px -24px rgba(7,15,36,.55); }
+.term:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.t-name { font-family: var(--display); font-weight: 800; font-size: 21px; line-height: 1.2; color: var(--ink); }
+.t-hint { font-family: var(--caps); font-weight: 700; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--red); }
+.t-def {
+  position: absolute; inset: 0; margin: 0; padding: 20px; display: flex; align-items: center; text-align: center;
+  background: var(--navy); color: #fff; font-size: 16px; line-height: 1.5; border-bottom: 4px solid var(--red);
+  opacity: 0; visibility: hidden; transform: perspective(600px) rotateX(-70deg); transform-origin: top; cursor: pointer;
+  transition: opacity .35s ease, transform .45s var(--ease), visibility 0s .45s;
+}
+.g-terms li.open .t-def { opacity: 1; visibility: visible; transform: none; transition: opacity .3s ease, transform .45s var(--ease), visibility 0s; }
+@media (max-width: 900px) { .g-terms { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .g-terms { gap: 12px; } .term { height: 140px; } .t-name { font-size: 18px; } .t-def { font-size: 14px; padding: 14px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .seat { opacity: 1; transform: none; transition: fill .2s; }
+  .p-track::after { transform: none !important; }
+}
+
+/* Flag band (replaces the text marquee) */
+.marquee.flags { padding: 22px 0; background: var(--navy-900); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); }
+.marquee.flags .marquee-track { animation-duration: 70s; }
+.marquee .fl {
+  display: inline-flex; align-items: center; gap: 14px; padding: 0 30px;
+  font-family: var(--caps); font-weight: 700; font-size: 15px; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.82); white-space: nowrap; line-height: 1;
+}
+.marquee .fl img { width: 44px; height: 33px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 6px 14px -6px rgba(0,0,0,.6); }
+.marquee.flags:hover .marquee-track { animation-play-state: paused; }
+
