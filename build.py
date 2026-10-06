@@ -200,6 +200,12 @@ def footer(base=""):
     if venues:
         lines += ('<div class="contact-line"><span>Venue</span>'
                   + "".join(f"<strong>{esc(v)}</strong>" for v in venues) + "</div>")
+    cr = CFG.get("credit") or {}
+    credit = ""
+    if cr.get("name"):
+        who = (f'<a href="{esc(cr["url"])}" target="_blank" rel="noopener" translate="no">{esc(cr["name"])}</a>'
+               if cr.get("url") else f'<span translate="no">{esc(cr["name"])}</span>')
+        credit = f'<p class="site-credit">Website by {who}</p>'
     ig_btn = (f'<a class="ig-btn" href="https://www.instagram.com/{esc(ig)}/" target="_blank" rel="noopener">'
               f'<img src="https://cdn.simpleicons.org/instagram/ffffff" alt="" width="18" height="18" loading="lazy">'
               f'Follow @{esc(ig)}</a>') if ig else ""
@@ -234,6 +240,7 @@ def footer(base=""):
     <div class="footer-bottom">
       <span>© {esc(CFG['year'])} {esc(CFG['full_name'])}</span>
     </div>
+    {credit}
   </div>
 </footer>
 <a class="to-top" href="#main" aria-label="Back to top"><span aria-hidden="true">↑</span></a>

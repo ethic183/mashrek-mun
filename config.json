@@ -23,6 +23,11 @@
 
   "schedule": [],
 
+  "credit": {
+    "name": "canvas.studio.jo",
+    "url": "https://www.instagram.com/canvas.studio.jo/"
+  },
+
   "theme_video": "assets/theme-film.mp4",
   "theme_video_poster": "assets/theme-film-poster.jpg",
 
