@@ -885,34 +885,3 @@ html.intro::after {
 .film-screen.img-mode .film-img { display: block; }
 .film-screen.img-mode.img-paused .film-img { visibility: hidden; }
 
-/* ==========================================================
-   Hero photography: the real conference, slowly cross-fading
-   ========================================================== */
-.hero-photos { position: absolute; inset: 0; z-index: -3; overflow: hidden; }
-.hero-photos img {
-  position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover;
-  opacity: 0;
-  animation: heroPhoto 24s linear infinite;
-  will-change: opacity, transform;
-}
-.hero-photos img:nth-child(2) { animation-delay: 8s; }
-.hero-photos img:nth-child(3) { animation-delay: 16s; }
-@keyframes heroPhoto {
-  0% { opacity: 0; transform: scale(1.02) translate3d(0, 0, 0); }
-  6% { opacity: .2; }
-  33% { opacity: .2; }
-  40% { opacity: 0; transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
-  100% { opacity: 0; transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
-}
-/* navy duotone wash over the photos, under the globe */
-.hero-photos::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(10, 22, 52, .55) 0%, rgba(13, 30, 70, .35) 45%, rgba(6, 13, 31, .85) 100%);
-  mix-blend-mode: normal;
-}
-.hero { background: radial-gradient(110% 80% at 50% 40%, #1d3a78 0%, #10224a 42%, #060d1f 100%); }
-.motion-paused .hero-photos img { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) {
-  .hero-photos img { animation: none; }
-  .hero-photos img:first-child { opacity: .2; }
-}

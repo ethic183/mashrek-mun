@@ -356,11 +356,6 @@ def build_home():
     topics = 2 * len(C)
     main = f"""
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero-photos" aria-hidden="true">
-    <img src="assets/photos/hero-session.jpg" alt="" width="1280" height="853" decoding="async">
-    <img src="assets/photos/hero-celebration.jpg" alt="" width="1280" height="853" decoding="async" fetchpriority="low">
-    <img src="assets/photos/hero-drafting.jpg" alt="" width="1280" height="960" decoding="async" fetchpriority="low">
-  </div>
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-grain" aria-hidden="true"></div>
   <div class="wrap hero-inner" data-parallax>
