@@ -134,7 +134,8 @@ def head(title, description, path, base=""):
   <link rel="manifest" href="{base}site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="{FONTS}" rel="stylesheet">
+  <link rel="preload" as="style" href="{FONTS}" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="{FONTS}" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="{base}css/style.css?v={CSS_V}">
 </head>
 """
