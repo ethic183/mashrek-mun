@@ -296,22 +296,6 @@
   }
 
 
-  /* ---------- Opening curtain (home page, first visit of the session) ---------- */
-  var root = document.documentElement;
-  if (root.classList.contains("intro")) {
-    var finished = false;
-    var finish = function () {
-      if (finished) return; finished = true;
-      root.classList.add("intro-out");
-      try { sessionStorage.setItem("mmun-intro", "1"); } catch (e) {}
-      setTimeout(function () { root.classList.remove("intro", "intro-out"); }, 1000);
-    };
-    setTimeout(finish, 900);
-    ["pointerdown", "keydown", "wheel", "touchstart"].forEach(function (ev) {
-      window.addEventListener(ev, finish, { once: true, passive: true });
-    });
-  }
-
   /* ---------- Magnetic buttons (desktop pointer only) ---------- */
   if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     document.querySelectorAll(".btn").forEach(function (btn) {
@@ -385,20 +369,43 @@
       soundBtn.querySelector(".lbl").textContent = video.muted ? "Turn On Sound" : "Mute";
     }
 
-    // If the browser blocks autoplay (e.g. Safari in Low Power Mode), start on the
-    // visitor's first tap, click or key press anywhere on the page.
+    // Safari in Low Power Mode refuses to autoplay <video>, even muted. Safari can still
+    // show the same MP4 as an animated <img>, which keeps playing, so we switch to that
+    // silent stand-in until the visitor asks for sound (a tap always allows playback).
+    var imgMode = false, imgTried = false, bar = screen.querySelector(".film-bar");
+    function useImageFallback() {
+      if (imgTried) return; imgTried = true;
+      var src = video.currentSrc || (video.querySelector("source") || {}).src;
+      if (!src) return;
+      var img = new Image();
+      img.className = "film-img"; img.alt = ""; img.setAttribute("aria-hidden", "true"); img.decoding = "async";
+      img.onload = function () {            // only Safari can decode an MP4 inside <img>
+        imgMode = true;
+        screen.insertBefore(img, bar);
+        screen.classList.add("img-mode");
+        update();
+      };
+      img.src = src;
+    }
+
+    // Other browsers that block autoplay: start on the first tap, click or key press.
     var unlockEvents = ["pointerdown", "touchstart", "keydown"];
     function unlock() {
       unlockEvents.forEach(function (ev) { document.removeEventListener(ev, unlock, true); });
-      if (inView && !userPaused && video.paused) play();
+      if (!imgMode && inView && !userPaused && video.paused) play();
     }
     function play() {
       var p = video.play();
-      if (p && p.catch) p.catch(function () {
+      if (p && p.catch) p.catch(function (err) {
+        if (err && err.name === "NotAllowedError") useImageFallback();
         unlockEvents.forEach(function (ev) { document.addEventListener(ev, unlock, { capture: true, passive: true }); });
       });
     }
-    function update() { if (inView && !userPaused) play(); else video.pause(); }
+    function update() {
+      var shouldPlay = inView && !userPaused;
+      if (imgMode) { video.pause(); screen.classList.toggle("img-paused", !shouldPlay); return; }
+      if (shouldPlay) play(); else video.pause();
+    }
 
     if (hasIO) {
       new IntersectionObserver(function (e) {
@@ -415,6 +422,10 @@
       update(); sync();
     });
     soundBtn.addEventListener("click", function () {
+      if (imgMode) {                         // leave the silent stand-in for the real film
+        imgMode = false;
+        screen.classList.remove("img-mode", "img-paused");
+      }
       video.muted = !video.muted;
       if (!video.muted && !video.dataset.restarted) { video.currentTime = 0; video.dataset.restarted = "1"; }
       if (!video.muted) { userPaused = false; update(); }

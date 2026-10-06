@@ -93,9 +93,12 @@ def abs_url(path):
 
 # ------------------------------------------------------------------ layout
 
-INTRO = ("<script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches)"
-         "{var h=document.documentElement;h.classList.add('intro');"
-         "setTimeout(function(){h.classList.remove('intro','intro-out')},4000)}}catch(e){}</script>")
+INTRO = ("<script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){"
+         "var h=document.documentElement,d=0;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');"
+         "var f=function(){if(d)return;d=1;h.classList.add('intro-out');"
+         "setTimeout(function(){h.classList.remove('intro','intro-out')},620)};"
+         "setTimeout(f,650);['pointerdown','keydown','wheel','touchstart'].forEach(function(e){"
+         "addEventListener(e,f,{once:true,passive:true})})}}catch(e){}</script>")
 
 
 def head(title, description, path, base=""):
@@ -243,7 +246,6 @@ def footer(base=""):
         </ul>
       </div>
     </div>
-    <p class="footer-mark" aria-hidden="true" translate="no">{esc(CFG['name'])}</p>
     <div class="footer-bottom">
       <span>© {esc(CFG['year'])} {esc(CFG['full_name'])}</span>
     </div>
@@ -269,6 +271,8 @@ def page_head(eyebrow, h1, lede, badges="", seal=True):
     seal_html = '<img class="seal" src="assets/logo-192.png" alt="" width="88" height="88">' if seal else ""
     badges_html = f'<div class="badges">{badges}</div>' if badges else ""
     return f"""<header class="page-head band">
+  <canvas class="hero-canvas" aria-hidden="true"></canvas>
+  <button class="motion-toggle" type="button" aria-pressed="false" title="Pause motion"><span class="icon" aria-hidden="true">❚❚</span><span class="label sr-only">Pause motion</span></button>
   <div class="wrap">
     {seal_html}
     <p class="eyebrow">{eyebrow}</p>
