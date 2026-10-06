@@ -214,6 +214,12 @@
   if (canvas && canvas.getContext) {
     var ctx = canvas.getContext("2d");
     var W = 0, H = 0, dpr = 1, running = !reduceMotion, visible = true, raf = 0, rot = 0, last = 0;
+    var tx = 0, ty = 0, px = 0, py = 0;     // pointer target / eased pointer (-0.5 .. 0.5)
+    if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+      window.addEventListener("pointermove", function (e) {
+        tx = e.clientX / window.innerWidth - 0.5; ty = e.clientY / window.innerHeight - 0.5;
+      }, { passive: true });
+    }
     var N = 1800, pts = [], stars = [];
     var golden = Math.PI * (3 - Math.sqrt(5));
     for (var k = 0; k < N; k++) {           // Fibonacci sphere
@@ -239,8 +245,9 @@
         ctx.beginPath(); ctx.arc(st.x * W, st.y * H, st.r, 0, 6.283); ctx.fill();
       }
       // globe
-      var R = Math.min(W, H) * (W < 700 ? .6 : .44), cx = W / 2, cy = H * .46;
-      var tilt = -0.38, ct = Math.cos(tilt), sn = Math.sin(tilt), cr = Math.cos(rot), sr = Math.sin(rot);
+      var R = Math.min(W, H) * (W < 700 ? .6 : .44), cx = W / 2 + px * 26, cy = H * .46 + py * 18;
+      var tilt = -0.38 + py * 0.32, rr = rot + px * 0.7;
+      var ct = Math.cos(tilt), sn = Math.sin(tilt), cr = Math.cos(rr), sr = Math.sin(rr);
       var halo = ctx.createRadialGradient(cx, cy, R * .2, cx, cy, R * 1.25);
       halo.addColorStop(0, "rgba(120,150,220,.10)"); halo.addColorStop(1, "rgba(120,150,220,0)");
       ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, R * 1.25, 0, 6.283); ctx.fill();
@@ -262,6 +269,7 @@
     function frame(t) {
       if (!last) last = t;
       rot += (t - last) * 0.00008; last = t;
+      px += (tx - px) * 0.045; py += (ty - py) * 0.045;
       draw(t);
       raf = running && visible ? requestAnimationFrame(frame) : 0;
     }
@@ -278,12 +286,79 @@
         body.classList.toggle("motion-paused", paused);
         toggle.setAttribute("aria-pressed", String(paused));
         toggle.querySelector(".label").textContent = paused ? "Play motion" : "Pause motion";
+        toggle.title = paused ? "Play motion" : "Pause motion";
         toggle.querySelector(".icon").textContent = paused ? "▶" : "❚❚";
         paused ? stop() : start();
       };
       if (reduceMotion) setPaused(true);
       toggle.addEventListener("click", function () { setPaused(running); });
     }
+  }
+
+
+  /* ---------- Opening curtain (home page, first visit of the session) ---------- */
+  var root = document.documentElement;
+  if (root.classList.contains("intro")) {
+    var finished = false;
+    var finish = function () {
+      if (finished) return; finished = true;
+      root.classList.add("intro-out");
+      try { sessionStorage.setItem("mmun-intro", "1"); } catch (e) {}
+      setTimeout(function () { root.classList.remove("intro", "intro-out"); }, 1000);
+    };
+    setTimeout(finish, 900);
+    ["pointerdown", "keydown", "wheel", "touchstart"].forEach(function (ev) {
+      window.addEventListener(ev, finish, { once: true, passive: true });
+    });
+  }
+
+  /* ---------- Magnetic buttons (desktop pointer only) ---------- */
+  if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    document.querySelectorAll(".btn").forEach(function (btn) {
+      btn.classList.add("magnetic");
+      btn.addEventListener("pointermove", function (e) {
+        var r = btn.getBoundingClientRect();
+        btn.style.setProperty("--mx", ((e.clientX - r.left - r.width / 2) * 0.18).toFixed(1) + "px");
+        btn.style.setProperty("--my", ((e.clientY - r.top - r.height / 2) * 0.28).toFixed(1) + "px");
+      });
+      btn.addEventListener("pointerleave", function () {
+        btn.style.setProperty("--mx", "0px"); btn.style.setProperty("--my", "0px");
+      });
+    });
+  }
+
+  /* ---------- Photo viewer ---------- */
+  var openers = Array.prototype.slice.call(document.querySelectorAll(".g-open"));
+  if (openers.length && window.HTMLDialogElement) {
+    var dlg = document.createElement("dialog");
+    dlg.className = "lightbox";
+    dlg.setAttribute("aria-label", "Photo viewer");
+    dlg.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure>' +
+      '<button class="lb-btn lb-close" type="button" aria-label="Close">✕</button>' +
+      '<button class="lb-btn lb-prev" type="button" aria-label="Previous photo">←</button>' +
+      '<button class="lb-btn lb-next" type="button" aria-label="Next photo">→</button>';
+    document.body.appendChild(dlg);
+    var lbImg = dlg.querySelector("img"), lbCap = dlg.querySelector("figcaption"), current = 0;
+    var show = function (i) {
+      current = (i + openers.length) % openers.length;
+      var img = openers[current].querySelector("img");
+      var cap = openers[current].parentNode.querySelector("figcaption");
+      lbImg.src = img.currentSrc && img.currentSrc.indexOf("-900") === -1 ? img.currentSrc : img.src;
+      lbImg.alt = img.alt;
+      lbCap.textContent = cap ? cap.textContent : "";
+    };
+    openers.forEach(function (btn, i) {
+      btn.addEventListener("click", function () { show(i); dlg.showModal(); });
+    });
+    dlg.querySelector(".lb-close").addEventListener("click", function () { dlg.close(); });
+    dlg.querySelector(".lb-prev").addEventListener("click", function () { show(current - 1); });
+    dlg.querySelector(".lb-next").addEventListener("click", function () { show(current + 1); });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") show(current - 1);
+      if (e.key === "ArrowRight") show(current + 1);
+    });
+    dlg.addEventListener("close", function () { openers[current].focus(); });
   }
 
   /* ---------- Theme film: plays while on screen, pauses when scrolled past ---------- */

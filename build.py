@@ -93,9 +93,15 @@ def abs_url(path):
 
 # ------------------------------------------------------------------ layout
 
+INTRO = ("<script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches)"
+         "{var h=document.documentElement;h.classList.add('intro');"
+         "setTimeout(function(){h.classList.remove('intro','intro-out')},4000)}}catch(e){}</script>")
+
+
 def head(title, description, path, base=""):
     full_title = f"{title} | {CFG['name']} ’{CFG['year'][2:]}" if title else \
         f"{CFG['name']} ’{CFG['year'][2:]} | {CFG['theme']}"
+    intro = INTRO if path == "index.html" else ""
     canonical = f'<link rel="canonical" href="{esc(abs_url(path))}">' if SITE_URL else ""
     og_url = f'<meta property="og:url" content="{esc(abs_url(path))}">' if SITE_URL else ""
     return f"""<!doctype html>
@@ -125,7 +131,7 @@ def head(title, description, path, base=""):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="{FONTS}" rel="stylesheet">
   <link rel="stylesheet" href="{base}css/style.css?v={CSS_V}">
-  <script>document.documentElement.classList.add('js')</script>
+  <script>document.documentElement.classList.add('js')</script>{intro}
 </head>
 """
 
@@ -237,6 +243,7 @@ def footer(base=""):
         </ul>
       </div>
     </div>
+    <p class="footer-mark" aria-hidden="true" translate="no">{esc(CFG['name'])}</p>
     <div class="footer-bottom">
       <span>© {esc(CFG['year'])} {esc(CFG['full_name'])}</span>
     </div>
@@ -359,7 +366,7 @@ def build_home():
     </div>
   </div>
   <div class="hero-facts"><ul>{facts}</ul></div>
-  <button class="motion-toggle" type="button" aria-pressed="false"><span class="icon" aria-hidden="true">❚❚</span><span class="label">Pause motion</span></button>
+  <button class="motion-toggle" type="button" aria-pressed="false" title="Pause motion"><span class="icon" aria-hidden="true">❚❚</span><span class="label sr-only">Pause motion</span></button>
 </section>
 
 <section class="glance" aria-label="At a glance">
@@ -403,21 +410,21 @@ def build_home():
     <h2 class="split gallery-title" id="gallery-title">Life at Mashrek MUN</h2>
     <div class="gallery-grid" data-stagger>
       <figure class="g-item g-main">
-        <img src="assets/photos/session-1600.jpg" srcset="assets/photos/session-900.jpg 900w, assets/photos/session-1600.jpg 1600w"
+        <button class="g-open" type="button" aria-label="View larger: A delegate stands to speak during a committee session, national flags lined up along the table"><img src="assets/photos/session-1600.jpg" srcset="assets/photos/session-900.jpg 900w, assets/photos/session-1600.jpg 1600w"
              sizes="(max-width: 800px) 100vw, 60vw" width="1600" height="1067" loading="lazy"
-             alt="A delegate stands to speak during a committee session, national flags lined up along the table">
+             alt="A delegate stands to speak during a committee session, national flags lined up along the table"></button>
         <figcaption>In session</figcaption>
       </figure>
       <figure class="g-item">
-        <img src="assets/photos/drafting-1600.jpg" srcset="assets/photos/drafting-900.jpg 900w, assets/photos/drafting-1600.jpg 1600w"
+        <button class="g-open" type="button" aria-label="View larger: Delegates working together on laptops, drafting a resolution"><img src="assets/photos/drafting-1600.jpg" srcset="assets/photos/drafting-900.jpg 900w, assets/photos/drafting-1600.jpg 1600w"
              sizes="(max-width: 800px) 100vw, 40vw" width="1600" height="1200" loading="lazy"
-             alt="Delegates working together on laptops, drafting a resolution">
+             alt="Delegates working together on laptops, drafting a resolution"></button>
         <figcaption>Drafting resolutions</figcaption>
       </figure>
       <figure class="g-item">
-        <img src="assets/photos/celebration-1600.jpg" srcset="assets/photos/celebration-900.jpg 900w, assets/photos/celebration-1600.jpg 1600w"
+        <button class="g-open" type="button" aria-label="View larger: Delegates cheering and applauding together in a ballroom"><img src="assets/photos/celebration-1600.jpg" srcset="assets/photos/celebration-900.jpg 900w, assets/photos/celebration-1600.jpg 1600w"
              sizes="(max-width: 800px) 100vw, 40vw" width="1600" height="1067" loading="lazy"
-             alt="Delegates cheering and applauding together in a ballroom">
+             alt="Delegates cheering and applauding together in a ballroom"></button>
         <figcaption>Celebrating together</figcaption>
       </figure>
     </div>
