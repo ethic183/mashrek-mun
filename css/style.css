@@ -774,26 +774,29 @@ html:not(.js) .to-top { display: none; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 
-/* Opening curtain, first visit of the session only */
-html.intro { overflow: hidden; }
+/* Opening curtain, first visit of the session only.
+   Pure CSS animation on compositor-friendly properties: runs smoothly even when the main
+   thread is busy, never blocks clicks or scrolling, and is gone after ~1s. */
+html.intro::before, html.intro::after { pointer-events: none; will-change: transform, opacity; }
 html.intro::before {
   content: ""; position: fixed; inset: 0; z-index: 200;
   background: radial-gradient(90% 70% at 50% 45%, #1d3a78 0%, #0c1c3f 55%, #060d1f 100%);
-  transition: transform .62s cubic-bezier(.7, 0, .2, 1);
+  animation: curtainUp .6s cubic-bezier(.7, 0, .2, 1) .42s both;
 }
 html.intro::after {
   content: ""; position: fixed; left: 50%; top: 50%; z-index: 201;
-  width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%;
+  width: 112px; height: 112px; margin: -56px 0 0 -56px; border-radius: 50%;
   background: url("../assets/logo-192.png") center / cover;
   box-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 0 0 12px rgba(255,255,255,.05), 0 0 0 13px rgba(255,255,255,.15);
-  animation: introLogo .5s var(--ease) both;
-  transition: opacity .3s ease, transform .62s cubic-bezier(.7, 0, .2, 1);
+  animation: logoLife .62s cubic-bezier(.2, .7, .1, 1) both;
 }
-html.intro-out::before { transform: translateY(-100%); }
-html.intro-out::after { opacity: 0; transform: translateY(-30vh) scale(.85); }
-@keyframes introLogo { from { opacity: 0; transform: scale(.7) rotate(-14deg); } to { opacity: 1; transform: none; } }
-html.intro:not(.intro-out) .hero-inner > *, html.intro:not(.intro-out) .hero-facts { animation-play-state: paused !important; }
-html.intro:not(.intro-out) .hero .split .w > span { transition: none !important; transform: translateY(110%) !important; }
+@keyframes curtainUp { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -100%, 0); } }
+@keyframes logoLife {
+  0% { opacity: 0; transform: scale(.82); }
+  35% { opacity: 1; transform: scale(1); }
+  62% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translate3d(0, -40px, 0) scale(.9); }
+}
 
 /* Slimmer header once scrolled */
 .site-header .wrap { transition: min-height .45s var(--ease); }
@@ -841,7 +844,7 @@ html.intro:not(.intro-out) .hero .split .w > span { transition: none !important;
 
 @media print { .lightbox { display: none !important; } }
 @media (prefers-reduced-motion: reduce) {
-  html.intro::before, html.intro::after { display: none; }
+  html.intro::before, html.intro::after { display: none !important; }
   .lightbox[open] { animation: none; }
 }
 
@@ -881,3 +884,35 @@ html.intro:not(.intro-out) .hero .split .w > span { transition: none !important;
 .film-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #03060f; display: none; }
 .film-screen.img-mode .film-img { display: block; }
 .film-screen.img-mode.img-paused .film-img { visibility: hidden; }
+
+/* ==========================================================
+   Hero photography: the real conference, slowly cross-fading
+   ========================================================== */
+.hero-photos { position: absolute; inset: 0; z-index: -3; overflow: hidden; }
+.hero-photos img {
+  position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover;
+  opacity: 0;
+  animation: heroPhoto 24s linear infinite;
+  will-change: opacity, transform;
+}
+.hero-photos img:nth-child(2) { animation-delay: 8s; }
+.hero-photos img:nth-child(3) { animation-delay: 16s; }
+@keyframes heroPhoto {
+  0% { opacity: 0; transform: scale(1.02) translate3d(0, 0, 0); }
+  6% { opacity: .2; }
+  33% { opacity: .2; }
+  40% { opacity: 0; transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+  100% { opacity: 0; transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+}
+/* navy duotone wash over the photos, under the globe */
+.hero-photos::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10, 22, 52, .55) 0%, rgba(13, 30, 70, .35) 45%, rgba(6, 13, 31, .85) 100%);
+  mix-blend-mode: normal;
+}
+.hero { background: radial-gradient(110% 80% at 50% 40%, #1d3a78 0%, #10224a 42%, #060d1f 100%); }
+.motion-paused .hero-photos img { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-photos img { animation: none; }
+  .hero-photos img:first-child { opacity: .2; }
+}

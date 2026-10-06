@@ -24,8 +24,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=b5238dce">
-  <script>document.documentElement.classList.add('js')</script><script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var h=document.documentElement,d=0;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');var f=function(){if(d)return;d=1;h.classList.add('intro-out');setTimeout(function(){h.classList.remove('intro','intro-out')},620)};setTimeout(f,650);['pointerdown','keydown','wheel','touchstart'].forEach(function(e){addEventListener(e,f,{once:true,passive:true})})}}catch(e){}</script>
+  <link rel="stylesheet" href="css/style.css?v=5e6c5546">
+  <script>document.documentElement.classList.add('js')</script><script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var h=document.documentElement;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');var f=function(){h.classList.remove('intro')};setTimeout(f,1100);['pointerdown','keydown','wheel','touchstart'].forEach(function(e){addEventListener(e,f,{once:true,passive:true})})}}catch(e){}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Mashrek Model United Nations 2026", "alternateName": "MMUN ’26", "url": "https://ethic183.github.io/mashrek-mun/", "logo": "https://ethic183.github.io/mashrek-mun/assets/logo.png"}</script>
 </head>
 <body data-page="home">
@@ -58,6 +58,11 @@
 <main id="main">
 
 <section class="hero" aria-labelledby="hero-title">
+  <div class="hero-photos" aria-hidden="true">
+    <img src="assets/photos/hero-session.jpg" alt="" width="1280" height="853" decoding="async">
+    <img src="assets/photos/hero-celebration.jpg" alt="" width="1280" height="853" decoding="async" fetchpriority="low">
+    <img src="assets/photos/hero-drafting.jpg" alt="" width="1280" height="960" decoding="async" fetchpriority="low">
+  </div>
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-grain" aria-hidden="true"></div>
   <div class="wrap hero-inner" data-parallax>
@@ -93,7 +98,7 @@
     </div>
     <figure class="film-frame unveil">
       <div class="film-screen">
-        <video muted loop playsinline controls preload="auto" poster="assets/theme-film-poster.jpg"
+        <video muted loop playsinline controls preload="metadata" poster="assets/theme-film-poster.jpg"
                aria-label="MMUN ’26 theme film: The Narratives of Power" aria-describedby="film-desc">
           <source src="assets/theme-film.mp4" type="video/mp4">
           Your browser can’t play this video. <a href="assets/theme-film.mp4">Download it instead</a>.
@@ -254,6 +259,6 @@
   </div>
 </footer>
 <a class="to-top" href="#main" aria-label="Back to top"><span aria-hidden="true">↑</span></a>
-<script src="js/site.js?v=3035ca7c" defer></script>
+<script src="js/site.js?v=cb6ce1b7" defer></script>
 </body>
 </html>

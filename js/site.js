@@ -220,7 +220,7 @@
         tx = e.clientX / window.innerWidth - 0.5; ty = e.clientY / window.innerHeight - 0.5;
       }, { passive: true });
     }
-    var N = 1800, pts = [], stars = [];
+    var N = 1100, pts = [], stars = [];
     var golden = Math.PI * (3 - Math.sqrt(5));
     for (var k = 0; k < N; k++) {           // Fibonacci sphere
       var yk = 1 - (k / (N - 1)) * 2, r = Math.sqrt(1 - yk * yk), th = golden * k;
@@ -230,7 +230,7 @@
       stars.push({ x: Math.random(), y: Math.random(), r: Math.random() * 1.3 + .3, p: Math.random() * 6.28, sp: .4 + Math.random() * 1.2 });
     }
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       W = canvas.clientWidth; H = canvas.clientHeight;
       canvas.width = W * dpr; canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -242,7 +242,7 @@
       for (var i = 0; i < stars.length; i++) {
         var st = stars[i], a = .25 + .55 * (0.5 + 0.5 * Math.sin(st.p + t * 0.001 * st.sp));
         ctx.fillStyle = "rgba(255,255,255," + a.toFixed(3) + ")";
-        ctx.beginPath(); ctx.arc(st.x * W, st.y * H, st.r, 0, 6.283); ctx.fill();
+        ctx.fillRect(st.x * W, st.y * H, st.r * 1.6, st.r * 1.6);
       }
       // globe
       var R = Math.min(W, H) * (W < 700 ? .6 : .44), cx = W / 2 + px * 26, cy = H * .46 + py * 18;
@@ -258,7 +258,7 @@
         if (z2 < -0.15) continue;
         var alpha = 0.10 + 0.72 * Math.max(0, z2);
         ctx.fillStyle = "rgba(196,210,240," + alpha.toFixed(3) + ")";
-        var size = 0.8 + 1.5 * Math.max(0, z2);
+        var size = 1 + 1.7 * Math.max(0, z2);
         ctx.fillRect(cx + x * R - size / 2, cy + y2 * R - size / 2, size, size);
       }
       ctx.strokeStyle = "rgba(196,210,240,.16)"; ctx.lineWidth = 1;
@@ -277,8 +277,19 @@
     function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
     window.addEventListener("resize", resize);
     resize();
-    if (hasIO) new IntersectionObserver(function (e) { visible = e[0].isIntersecting; visible ? start() : stop(); }).observe(canvas);
-    start();
+    // Let the opening curtain run on its own; start the globe once it has gone.
+    var introActive = document.documentElement.classList.contains("intro");
+    var begin = function () {
+      introActive = false;
+      if (hasIO) new IntersectionObserver(function (e) { visible = e[0].isIntersecting; visible ? start() : stop(); }).observe(canvas);
+      start();
+    };
+    if (introActive) {
+      var mo = new MutationObserver(function () {
+        if (!document.documentElement.classList.contains("intro")) { mo.disconnect(); begin(); }
+      });
+      mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    } else { begin(); }
 
     if (toggle) {
       var setPaused = function (paused) {

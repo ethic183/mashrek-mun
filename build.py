@@ -94,11 +94,10 @@ def abs_url(path):
 # ------------------------------------------------------------------ layout
 
 INTRO = ("<script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){"
-         "var h=document.documentElement,d=0;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');"
-         "var f=function(){if(d)return;d=1;h.classList.add('intro-out');"
-         "setTimeout(function(){h.classList.remove('intro','intro-out')},620)};"
-         "setTimeout(f,650);['pointerdown','keydown','wheel','touchstart'].forEach(function(e){"
-         "addEventListener(e,f,{once:true,passive:true})})}}catch(e){}</script>")
+         "var h=document.documentElement;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');"
+         "var f=function(){h.classList.remove('intro')};setTimeout(f,1100);"
+         "['pointerdown','keydown','wheel','touchstart'].forEach(function(e){addEventListener(e,f,{once:true,passive:true})})"
+         "}}catch(e){}</script>")
 
 
 def head(title, description, path, base=""):
@@ -330,7 +329,7 @@ def build_home():
     </div>
     <figure class="film-frame unveil">
       <div class="film-screen">
-        <video muted loop playsinline controls preload="auto" poster="{esc(CFG.get('theme_video_poster', ''))}"
+        <video muted loop playsinline controls preload="metadata" poster="{esc(CFG.get('theme_video_poster', ''))}"
                aria-label="{esc(CFG['short'])} theme film: The Narratives of Power" aria-describedby="film-desc">
           <source src="{esc(CFG['theme_video'])}" type="video/mp4">
           Your browser can’t play this video. <a href="{esc(CFG['theme_video'])}">Download it instead</a>.
@@ -357,6 +356,11 @@ def build_home():
     topics = 2 * len(C)
     main = f"""
 <section class="hero" aria-labelledby="hero-title">
+  <div class="hero-photos" aria-hidden="true">
+    <img src="assets/photos/hero-session.jpg" alt="" width="1280" height="853" decoding="async">
+    <img src="assets/photos/hero-celebration.jpg" alt="" width="1280" height="853" decoding="async" fetchpriority="low">
+    <img src="assets/photos/hero-drafting.jpg" alt="" width="1280" height="960" decoding="async" fetchpriority="low">
+  </div>
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-grain" aria-hidden="true"></div>
   <div class="wrap hero-inner" data-parallax>
