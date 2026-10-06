@@ -36,7 +36,7 @@
       "slug": "general-assembly",
       "abbr": "GA",
       "name": "General Assembly",
-      "level": "Beginner 1",
+      "level": "Beginner",
       "tier": "Beginner",
       "blurb": "The main deliberative body of the UN, where every Member State has an equal voice.",
       "guide_url": ""
@@ -45,7 +45,7 @@
       "slug": "human-rights-council",
       "abbr": "HRC",
       "name": "Human Rights Council",
-      "level": "Beginner 2",
+      "level": "Beginner",
       "tier": "Beginner",
       "blurb": "The intergovernmental body responsible for promoting and protecting human rights around the world.",
       "guide_url": ""
@@ -54,7 +54,7 @@
       "slug": "world-health-organization",
       "abbr": "WHO",
       "name": "World Health Organization",
-      "level": "Beginner 3",
+      "level": "Beginner",
       "tier": "Beginner",
       "blurb": "The UN agency directing and coordinating international work on public health.",
       "guide_url": ""
