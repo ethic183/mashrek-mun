@@ -95,7 +95,9 @@ def abs_url(path):
 
 INTRO = ("<script>try{if(!sessionStorage.getItem('mmun-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){"
          "var h=document.documentElement;h.classList.add('intro');sessionStorage.setItem('mmun-intro','1');"
-         "var f=function(){h.classList.remove('intro')};setTimeout(f,1100);"
+         "var f=function(){h.classList.remove('intro')};"
+         "h.addEventListener('animationend',function(e){if(e.animationName==='curtainUp')f()});"
+         "setTimeout(f,2500);"
          "['pointerdown','keydown','wheel','touchstart'].forEach(function(e){addEventListener(e,f,{once:true,passive:true})})"
          "}}catch(e){}</script>")
 
@@ -112,6 +114,7 @@ def head(title, description, path, base=""):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light">
+  <script>document.documentElement.classList.add('js')</script>{intro}
   <title>{esc(full_title)}</title>
   <meta name="description" content="{esc(description)}">
   <meta name="theme-color" content="#0c1830">
@@ -133,7 +136,6 @@ def head(title, description, path, base=""):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="{FONTS}" rel="stylesheet">
   <link rel="stylesheet" href="{base}css/style.css?v={CSS_V}">
-  <script>document.documentElement.classList.add('js')</script>{intro}
 </head>
 """
 
