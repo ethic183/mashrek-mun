@@ -887,27 +887,6 @@ html.intro::after {
 
 
 /* ==========================================================
-   Parliament seating chart (Committees section)
-   ========================================================== */
-.hemicycle { margin: 0 auto clamp(40px, 5vw, 64px); max-width: 640px; }
-.hemicycle svg { display: block; width: 100%; height: auto; overflow: visible; }
-.seat {
-  opacity: 0; transform: scale(.2); transform-box: fill-box; transform-origin: center;
-  transition: transform .5s var(--ease), opacity .5s var(--ease), fill .25s ease;
-  transition-delay: calc(var(--d) * 3ms);
-}
-.seat.t-beginner { fill: #8fa3cf; }
-.seat.t-intermediate { fill: #3a5ea8; }
-.seat.t-expert { fill: var(--navy-800); }
-.seat.t-special { fill: var(--red); }
-.hemicycle.in .seat { opacity: 1; transform: none; }
-.hemicycle.hl .seat { opacity: .16; transition-delay: 0s; }
-.hemicycle.hl .seat.on { opacity: 1; fill: var(--red); transform: scale(1.12); }
-.hc-count { font-family: var(--display); font-weight: 900; font-size: 62px; fill: var(--ink); transition: opacity .2s; }
-.hc-label { font-family: var(--caps); font-weight: 700; font-size: 14px; letter-spacing: .26em; text-transform: uppercase; fill: var(--muted); }
-.hemicycle.hl .hc-count { font-size: 44px; fill: var(--red); }
-
-/* ==========================================================
    The path to a resolution
    ========================================================== */
 .process { background: var(--white); border-top: 1px solid var(--line); }
@@ -962,7 +941,6 @@ html.intro::after {
 @media (max-width: 460px) { .g-terms { gap: 12px; } .term { height: 140px; } .t-name { font-size: 18px; } .t-def { font-size: 14px; padding: 14px; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .seat { opacity: 1; transform: none; transition: fill .2s; }
   .p-track::after { transform: none !important; }
 }
 
@@ -977,3 +955,36 @@ html.intro::after {
 .marquee .fl img { width: 44px; height: 33px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 6px 14px -6px rgba(0,0,0,.6); }
 .marquee.flags:hover .marquee-track { animation-play-state: paused; }
 
+
+/* ==========================================================
+   Phone fit-and-finish
+   ========================================================== */
+/* Big headlines never wider than the screen */
+.headline { font-size: clamp(38px, 11.5vw, 96px); overflow-wrap: anywhere; }
+h1, h2 { overflow-wrap: break-word; }
+@media (max-width: 380px) {
+  .hero h1 { font-size: 42px; }
+  .section-head h2, .film-head h2, .gallery-title { font-size: 34px; }
+  .cta h2 { font-size: 32px; }
+  .page-head h1 { font-size: 38px; }
+}
+/* Comfortable tap targets for the film controls */
+@media (max-width: 700px) {
+  .film-bar { right: 8px; bottom: 8px; gap: 6px; }
+  .film-btn { min-height: 40px; padding: 8px 12px; font-size: 12px; }
+}
+.motion-toggle .icon, .film-btn .ic { font-size: 12px; }
+
+/* Footer: Instagram button sits in the Contact column */
+.footer-grid .ig-btn { margin: 0 0 24px; }
+.footer-brand .ig-btn { grid-column: auto; }
+
+/* Phones: tighter rhythm, no floating back-to-top over the text */
+@media (max-width: 700px) {
+  :root { --space: 72px; }
+  .to-top { display: none; }
+  .section-head { margin-bottom: 40px; }
+}
+.ig-btn { white-space: nowrap; letter-spacing: .12em; font-size: 13px; }
+@media (min-width: 861px) { .footer-grid { grid-template-columns: 1fr 1.25fr .85fr; } }
+.footer-brand strong { white-space: nowrap; font-size: clamp(20px, 2vw, 24px); }

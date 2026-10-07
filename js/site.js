@@ -322,34 +322,6 @@
     });
   }
 
-  /* ---------- Seating chart: hovering a committee lights up its block ---------- */
-  var hc = document.querySelector(".hemicycle");
-  if (hc) {
-    var countEl = hc.querySelector(".hc-count"), labelEl = hc.querySelector(".hc-label");
-    var count0 = countEl.textContent, label0 = labelEl.textContent;
-    var seatsByG = {};
-    hc.querySelectorAll(".seat").forEach(function (s) { (seatsByG[s.getAttribute("data-g")] = seatsByG[s.getAttribute("data-g")] || []).push(s); });
-    var light = function (row) {
-      var g = row.getAttribute("data-g");
-      hc.classList.add("hl");
-      hc.querySelectorAll(".seat.on").forEach(function (s) { s.classList.remove("on"); });
-      (seatsByG[g] || []).forEach(function (s) { s.classList.add("on"); });
-      countEl.textContent = row.querySelector(".c-abbr").textContent;
-      labelEl.textContent = row.querySelector(".c-level").textContent;
-    };
-    var reset = function () {
-      hc.classList.remove("hl");
-      hc.querySelectorAll(".seat.on").forEach(function (s) { s.classList.remove("on"); });
-      countEl.textContent = count0; labelEl.textContent = label0;
-    };
-    document.querySelectorAll(".c-row[data-g]").forEach(function (row) {
-      row.addEventListener("mouseenter", function () { light(row); });
-      row.addEventListener("focus", function () { light(row); });
-      row.addEventListener("mouseleave", reset);
-      row.addEventListener("blur", reset);
-    });
-  }
-
   /* ---------- Glossary placards: tap to reveal the meaning ---------- */
   document.querySelectorAll(".g-terms li").forEach(function (li) {
     var btn = li.querySelector(".term"), def = li.querySelector(".t-def");

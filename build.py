@@ -202,7 +202,6 @@ def footer(base=""):
     ig = ct.get("instagram", "").lstrip("@").strip()
     lines = "".join([
         contact_line("Email", ct.get("email"), f"mailto:{ct.get('email')}"),
-        contact_line("Instagram", f"@{ig}" if ig else "", f"https://www.instagram.com/{ig}/"),
         contact_line("Phone", ct.get("phone"), "tel:" + ct.get("phone", "").replace(" ", "")),
     ])
     venues = ct.get("location") or []
@@ -232,10 +231,10 @@ def footer(base=""):
           <strong translate="no">{esc(CFG['name'])} ’{esc(CFG['year'][2:])}</strong>
           <span>{esc(CFG['theme'])}</span>
         </div>
-        {ig_btn}
       </div>
       <div>
         <h3>Contact us</h3>
+        {ig_btn}
         {lines}
       </div>
       <div>
@@ -297,32 +296,6 @@ def pending(eyebrow, title, body, buttons=""):
 
 # ------------------------------------------------------------------ pages
 
-def hemicycle_svg():
-    """A parliament-style semicircle of seats, split into one block per committee."""
-    import math
-    cx, cy, rows, r0, r1, seat = 300, 296, 8, 112, 270, 6.4
-    seats = []
-    for i in range(rows):
-        r = r0 + (r1 - r0) * i / (rows - 1)
-        n = int(round(math.pi * r / 18.5))
-        for j in range(n):
-            a = math.pi * (j + 0.5) / n          # 0..pi, left to right
-            seats.append((a, cx - r * math.cos(a), cy - r * math.sin(a)))
-    seats.sort(key=lambda s: s[0])
-    per = len(seats) / len(C)
-    out = []
-    for k, (a, x, y) in enumerate(seats):
-        g = min(int(k / per), len(C) - 1)
-        tier = C[g]["tier"].lower()
-        out.append(f'<circle class="seat t-{tier}" data-g="{g}" cx="{x:.1f}" cy="{y:.1f}" r="{seat}" style="--d:{k}"/>')
-    names = "".join(f'<li data-g="{i}">{esc(c["abbr"])}</li>' for i, c in enumerate(C))
-    return (f'<figure class="hemicycle reveal" aria-label="Seating chart of the {len(C)} committees">'
-            f'<svg viewBox="0 0 600 310" role="img" aria-hidden="true">{"".join(out)}'
-            f'<text class="hc-count" x="300" y="268" text-anchor="middle">{len(C)}</text>'
-            f'<text class="hc-label" x="300" y="294" text-anchor="middle">Committees</text></svg>'
-            f'</figure>')
-
-
 PROCESS = [
     ("Roll Call", "The chair confirms which delegations are present and voting."),
     ("Opening Speeches", "Each delegate sets out their country’s position on the topic."),
@@ -358,7 +331,7 @@ def build_home():
     if isinstance(venues, str):
         venues = [venues]
 
-    rows = "".join(f"""<li><a class="c-row" data-g="{i}" href="{c['slug']}.html">
+    rows = "".join(f"""<li><a class="c-row" href="{c['slug']}.html">
       <span class="c-abbr">{esc(c['abbr'])}</span>
       <span class="c-name">{esc(c['name'])}</span>
       <span class="c-level">{esc(c['level'])}</span>
@@ -498,7 +471,6 @@ def build_home():
     <div class="section-head center reveal">
       <h2 class="split">Choose your room.</h2>
     </div>
-    {hemicycle_svg()}
     <ul class="c-list" data-stagger>{rows}</ul>
     <p class="c-foot reveal"><a href="guides.html">{released} of {len(C)} study guides released →</a></p>
   </div>
