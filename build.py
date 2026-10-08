@@ -356,7 +356,6 @@ def build_home():
         </video>
         <div class="film-bar">
           <label class="film-vol"><span class="sr-only">Volume</span><input class="film-volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"></label>
-          <button class="film-btn film-sound" type="button" aria-pressed="false"><span class="lbl">Turn On Sound</span></button>
           <button class="film-btn film-pause" type="button" aria-pressed="false"><span class="ic" aria-hidden="true">❚❚</span> <span class="lbl">Pause</span></button>
         </div>
       </div>
