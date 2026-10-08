@@ -173,10 +173,58 @@
     onScroll();
   }
 
-  /* ---------- Save study guide as PDF (uses the print dialog) ---------- */
+  /* ---------- Save study guide as a PDF download ---------- */
+  var pdfLib = null;
+  function loadPdfLib() {
+    if (window.html2pdf) return Promise.resolve();
+    if (pdfLib) return pdfLib;
+    pdfLib = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+      s.onload = resolve;
+      s.onerror = function () { pdfLib = null; reject(new Error("html2pdf failed to load")); };
+      document.head.appendChild(s);
+    });
+    return pdfLib;
+  }
   document.querySelectorAll("[data-print]").forEach(function (btn) {
     btn.hidden = false;
-    btn.addEventListener("click", function () { window.print(); });
+    var label = btn.textContent;
+    btn.addEventListener("click", function () {
+      if (btn.disabled) return;
+      var guide = document.querySelector("article.guide");
+      var h1 = document.querySelector("h1");
+      if (!guide || !h1) { window.print(); return; }
+      btn.disabled = true;
+      btn.textContent = "Preparing PDF\u2026";
+      var box = null;
+      function done() { if (box) box.remove(); btn.disabled = false; btn.textContent = label; }
+      loadPdfLib().then(function () {
+        var lede = document.querySelector(".lede");
+        var brand = document.querySelector(".footer-brand strong");
+        box = document.createElement("div");
+        box.className = "pdf-export";
+        var site = document.createElement("p");
+        site.className = "pdf-site";
+        site.textContent = brand ? brand.textContent : document.title;
+        var title = document.createElement("h1");
+        title.textContent = h1.textContent;
+        box.appendChild(site);
+        box.appendChild(title);
+        if (lede) { var l = document.createElement("p"); l.className = "lede"; l.textContent = lede.textContent; box.appendChild(l); }
+        box.appendChild(guide.cloneNode(true));
+        document.body.appendChild(box);
+        var page = location.pathname.split("/").pop().replace(/\.html$/, "") || "guide";
+        return window.html2pdf().set({
+          margin: 14,
+          filename: page + "-study-guide.pdf",
+          image: { type: "jpeg", quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"], avoid: ["h2", "h3", "h4", "p", "li"] }
+        }).from(box).save();
+      }).then(done, function () { done(); window.print(); });
+    });
   });
 
   /* ---------- Back-to-top button: shown once the page header is out of view ---------- */
@@ -374,6 +422,7 @@
     if (!video) return;
     var soundBtn = screen.querySelector(".film-sound");
     var pauseBtn = screen.querySelector(".film-pause");
+    var slider = screen.querySelector(".film-volume");
     var inView = false;
     var userPaused = false;                // set when the visitor presses Pause
 
@@ -390,6 +439,7 @@
       pauseBtn.querySelector(".ic").textContent = userPaused ? "▶" : "❚❚";
       soundBtn.setAttribute("aria-pressed", String(!video.muted));
       soundBtn.querySelector(".lbl").textContent = video.muted ? "Turn On Sound" : "Mute";
+      if (slider) slider.value = video.muted ? 0 : video.volume;
     }
 
     // Safari in Low Power Mode refuses to autoplay <video>, even muted. Safari can still
@@ -453,6 +503,12 @@
       if (!video.muted && !video.dataset.restarted) { video.currentTime = 0; video.dataset.restarted = "1"; }
       if (!video.muted) { userPaused = false; update(); }
       sync();
+    });
+    if (slider) slider.addEventListener("input", function () {
+      var v = parseFloat(slider.value);
+      video.volume = v;
+      if (v > 0 && video.muted) soundBtn.click();
+      else if (v === 0 && !video.muted) video.muted = true;
     });
     ["play", "pause", "volumechange"].forEach(function (ev) { video.addEventListener(ev, sync); });
     sync();

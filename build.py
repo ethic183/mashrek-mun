@@ -210,12 +210,6 @@ def footer(base=""):
     if venues:
         lines += ('<div class="contact-line"><span>Venue</span>'
                   + "".join(f"<strong>{esc(v)}</strong>" for v in venues) + "</div>")
-    cr = CFG.get("credit") or {}
-    credit = ""
-    if cr.get("name"):
-        who = (f'<a href="{esc(cr["url"])}" target="_blank" rel="noopener" translate="no">{esc(cr["name"])}</a>'
-               if cr.get("url") else f'<span translate="no">{esc(cr["name"])}</span>')
-        credit = f'<p class="site-credit">Website by {who}</p>'
     ig_btn = (f'<a class="ig-btn" href="https://www.instagram.com/{esc(ig)}/" target="_blank" rel="noopener">'
               f'<img src="https://cdn.simpleicons.org/instagram/ffffff" alt="" width="18" height="18" loading="lazy">'
               f'Follow @{esc(ig)}</a>') if ig else ""
@@ -247,10 +241,6 @@ def footer(base=""):
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© {esc(CFG['year'])} {esc(CFG['full_name'])}</span>
-    </div>
-    {credit}
   </div>
 </footer>
 <a class="to-top" href="#main" aria-label="Back to top"><span aria-hidden="true">↑</span></a>
@@ -365,6 +355,7 @@ def build_home():
           Your browser can’t play this video. <a href="{esc(CFG['theme_video'])}">Download it instead</a>.
         </video>
         <div class="film-bar">
+          <label class="film-vol"><span class="sr-only">Volume</span><input class="film-volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"></label>
           <button class="film-btn film-sound" type="button" aria-pressed="false"><span class="lbl">Turn On Sound</span></button>
           <button class="film-btn film-pause" type="button" aria-pressed="false"><span class="ic" aria-hidden="true">❚❚</span> <span class="lbl">Pause</span></button>
         </div>
@@ -469,7 +460,7 @@ def build_home():
 <section class="committees-home" id="committees">
   <div class="wrap narrow">
     <div class="section-head center reveal">
-      <h2 class="split">Choose your room.</h2>
+      <h2 class="split">Choose your committee.</h2>
     </div>
     <ul class="c-list" data-stagger>{rows}</ul>
     <p class="c-foot reveal"><a href="guides.html">{released} of {len(C)} study guides released →</a></p>

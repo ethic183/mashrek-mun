@@ -994,3 +994,11 @@ h1, h2 { overflow-wrap: break-word; }
 /* Credit: quieter still */
 .site-credit { font-size: 11px; letter-spacing: .06em; color: rgba(255,255,255,.16); margin-top: 10px; }
 .site-credit a:hover { color: rgba(255,255,255,.5); }
+.film-vol { display: inline-flex; align-items: center; padding: 0 12px; background: rgba(5,10,21,.72); border: 1px solid rgba(255,255,255,.45); backdrop-filter: blur(4px); }
+.film-volume { width: 90px; margin: 0; cursor: pointer; accent-color: #fff; background: transparent; }
+@media (max-width: 560px) { .film-volume { width: 64px; } .film-vol { padding: 0 8px; } }
+.pdf-export { position: absolute; left: -99999px; top: 0; width: 720px; background: #fff; color: #111; padding: 0; }
+.pdf-export, .pdf-export * { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
+.html2pdf__container .pdf-export { position: static; left: auto; width: auto; }
+.pdf-export, .pdf-export * { box-sizing: border-box; }
+.pdf-export .guide { width: 100%; max-width: none; margin: 0; padding: 0; }
