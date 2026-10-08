@@ -351,8 +351,6 @@ a.status:hover { text-decoration: none; background: var(--navy-800); color: #fff
 }
 .film-btn:hover { background: #fff; color: var(--navy-900); }
 .film-btn .ic { font-size: 10px; letter-spacing: 0; }
-.film-sound[aria-pressed="false"] { background: var(--red); border-color: var(--red); }
-.film-sound[aria-pressed="false"]:hover { background: #a50d25; color: #fff; }
 @media (max-width: 560px) { .film-bar { right: 8px; bottom: 8px; } .film-btn { padding: 6px 10px; font-size: 11px; } }
 .film-screen {
   position: relative; aspect-ratio: 832 / 464; background: #03060f;
@@ -369,8 +367,6 @@ a.status:hover { text-decoration: none; background: var(--navy-800); color: #fff
 }
 .film-btn:hover { background: #fff; color: var(--navy-900); }
 .film-btn .ic { font-size: 10px; letter-spacing: 0; }
-.film-sound[aria-pressed="false"] { background: var(--red); border-color: var(--red); }
-.film-sound[aria-pressed="false"]:hover { background: #a50d25; color: #fff; }
 @media (max-width: 560px) { .film-bar { right: 8px; bottom: 8px; } .film-btn { padding: 6px 10px; font-size: 11px; } }
 
 

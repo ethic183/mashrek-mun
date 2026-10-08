@@ -420,15 +420,14 @@
   document.querySelectorAll(".film-screen").forEach(function (screen) {
     var video = screen.querySelector("video");
     if (!video) return;
-    var soundBtn = screen.querySelector(".film-sound");
     var pauseBtn = screen.querySelector(".film-pause");
     var slider = screen.querySelector(".film-volume");
     var inView = false;
     var userPaused = false;                // set when the visitor presses Pause
 
     video.removeAttribute("controls");     // our two buttons replace the native bar
-    video.muted = true;
-    video.defaultMuted = true;             // Safari needs this set for muted autoplay
+    video.muted = false;                   // the film starts with sound; see play() for blocked autoplay
+    video.volume = 1;
     video.pause();
     screen.classList.add("enhanced");
 
@@ -437,14 +436,12 @@
       pauseBtn.setAttribute("aria-pressed", String(userPaused));
       pauseBtn.querySelector(".lbl").textContent = userPaused ? "Play" : "Pause";
       pauseBtn.querySelector(".ic").textContent = userPaused ? "▶" : "❚❚";
-      soundBtn.setAttribute("aria-pressed", String(!video.muted));
-      soundBtn.querySelector(".lbl").textContent = video.muted ? "Turn On Sound" : "Mute";
       if (slider) slider.value = video.muted ? 0 : video.volume;
     }
 
     // Safari in Low Power Mode refuses to autoplay <video>, even muted. Safari can still
     // show the same MP4 as an animated <img>, which keeps playing, so we switch to that
-    // silent stand-in until the visitor asks for sound (a tap always allows playback).
+    // silent stand-in until the visitor raises the volume (a tap always allows playback).
     var imgMode = false, imgTried = false, bar = screen.querySelector(".film-bar");
     function useImageFallback() {
       if (imgTried) return; imgTried = true;
@@ -463,15 +460,42 @@
 
     // Other browsers that block autoplay: start on the first tap, click or key press.
     var unlockEvents = ["pointerdown", "touchstart", "keydown"];
+    // Browsers only allow autoplay with sound after the visitor has interacted with the page.
+    // So we try with sound first; if that is blocked we start muted and switch the sound on
+    // (from the beginning) at the visitor's first tap, click or key press.
+    var soundBlocked = false;
     function unlock() {
       unlockEvents.forEach(function (ev) { document.removeEventListener(ev, unlock, true); });
+      if (soundBlocked) {
+        soundBlocked = false;
+        if (imgMode) leaveImageMode();
+        video.muted = false;
+        video.currentTime = 0;
+      }
       if (!imgMode && inView && !userPaused && video.paused) play();
+      sync();
+    }
+    function listenForUnlock() {
+      unlockEvents.forEach(function (ev) { document.addEventListener(ev, unlock, { capture: true, passive: true }); });
+    }
+    function leaveImageMode() {
+      imgMode = false;
+      screen.classList.remove("img-mode", "img-paused");
     }
     function play() {
       var p = video.play();
       if (p && p.catch) p.catch(function (err) {
-        if (err && err.name === "NotAllowedError") useImageFallback();
-        unlockEvents.forEach(function (ev) { document.addEventListener(ev, unlock, { capture: true, passive: true }); });
+        if (err && err.name !== "NotAllowedError") return;
+        if (!video.muted) {                 // sound blocked: retry muted, which is always allowed
+          soundBlocked = true;
+          video.muted = true;
+          sync();
+          play();
+          listenForUnlock();
+          return;
+        }
+        useImageFallback();                 // even muted playback is blocked (Low Power Mode)
+        listenForUnlock();
       });
     }
     function update() {
@@ -494,21 +518,16 @@
       userPaused = !userPaused;
       update(); sync();
     });
-    soundBtn.addEventListener("click", function () {
-      if (imgMode) {                         // leave the silent stand-in for the real film
-        imgMode = false;
-        screen.classList.remove("img-mode", "img-paused");
-      }
-      video.muted = !video.muted;
-      if (!video.muted && !video.dataset.restarted) { video.currentTime = 0; video.dataset.restarted = "1"; }
-      if (!video.muted) { userPaused = false; update(); }
-      sync();
-    });
     if (slider) slider.addEventListener("input", function () {
       var v = parseFloat(slider.value);
-      video.volume = v;
-      if (v > 0 && video.muted) soundBtn.click();
-      else if (v === 0 && !video.muted) video.muted = true;
+      soundBlocked = false;                 // the visitor is now choosing the volume themselves
+      if (v > 0) {
+        if (imgMode) { leaveImageMode(); update(); }
+        video.volume = v;
+        video.muted = false;
+      } else {
+        video.muted = true;
+      }
     });
     ["play", "pause", "volumechange"].forEach(function (ev) { video.addEventListener(ev, sync); });
     sync();
