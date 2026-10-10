@@ -293,9 +293,11 @@
       stars.push({ x: Math.random(), y: Math.random(), r: Math.random() * 1.3 + .3, p: Math.random() * 6.28, sp: .4 + Math.random() * 1.2 });
     }
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      W = canvas.clientWidth; H = canvas.clientHeight;
-      canvas.width = W * dpr; canvas.height = H * dpr;
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      var d = Math.min(window.devicePixelRatio || 1, 1.5);
+      if (!w || !h || (w === W && h === H && d === dpr)) return;   // not laid out yet, or unchanged
+      dpr = d; W = w; H = h;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       draw(0);
     }
@@ -338,7 +340,12 @@
     }
     function start() { if (!raf && running && visible) { last = 0; raf = requestAnimationFrame(frame); } }
     function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+    // Re-measure whenever the banner's box really changes (late fonts, rotation, zoom, pages
+    // restored from the back/forward cache), so the drawing is never stretched.
+    if ("ResizeObserver" in window) new ResizeObserver(resize).observe(canvas);
     window.addEventListener("resize", resize);
+    window.addEventListener("load", resize);
+    window.addEventListener("pageshow", resize);
     resize();
     // Let the opening curtain run on its own; start the globe once it has gone.
     var introActive = document.documentElement.classList.contains("intro");
