@@ -605,14 +605,14 @@ a.status:hover { text-decoration: none; background: var(--navy-800); color: #fff
    ========================================================== */
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; background: var(--red); transform-origin: 0 50%; transform: scaleX(0); }
 
-.js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .8s var(--ease); }
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .5s var(--ease), transform .6s var(--ease); }
 .js .reveal.in { opacity: 1; transform: none; }
 
 .js .split .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .08em .12em; margin: 0 -.08em -.12em; }
-.js .split .w > span { display: inline-block; transform: translateY(110%); transition: transform .8s var(--ease); transition-delay: calc(var(--i) * 45ms); }
+.js .split .w > span { display: inline-block; transform: translateY(110%); transition: transform .65s var(--ease); transition-delay: calc(var(--i) * 35ms); }
 .js .split.in .w > span { transform: none; }
 
-.js [data-stagger] > * { opacity: 0; transform: translateY(20px); transition: opacity .65s var(--ease), transform .75s var(--ease); transition-delay: calc(var(--i, 0) * 60ms); }
+.js [data-stagger] > * { opacity: 0; transform: translateY(20px); transition: opacity .5s var(--ease), transform .6s var(--ease); transition-delay: calc(var(--i, 0) * 40ms); }
 .js [data-stagger].in > * { opacity: 1; transform: none; }
 
 .js hr.rule { transform: scaleX(0); transition: transform 1s var(--ease); }
@@ -783,7 +783,7 @@ html.intro::before {
 html.intro::after {
   content: ""; position: fixed; left: 50%; top: 50%; z-index: 201;
   width: 112px; height: 112px; margin: -56px 0 0 -56px; border-radius: 50%;
-  background: url("../assets/logo-192.png") center / cover;
+  background: url("../assets/logo-192.webp") center / cover;
   box-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 0 0 12px rgba(255,255,255,.05), 0 0 0 13px rgba(255,255,255,.15);
   animation: logoLife .62s cubic-bezier(.2, .7, .1, 1) both;
 }

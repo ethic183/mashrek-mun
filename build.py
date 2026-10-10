@@ -139,6 +139,7 @@ def head(title, description, path, base=""):
   <link rel="preload" as="style" href="{FONTS}" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="{FONTS}" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="{base}css/style.css?v={CSS_V}">
+  <script type="speculationrules">{{"prerender": [{{"where": {{"and": [{{"href_matches": "/*"}}, {{"not": {{"selector_matches": "[target=_blank], [download]"}}}}]}}, "eagerness": "moderate"}}]}}</script>
 </head>
 """
 
@@ -163,7 +164,7 @@ def header(active, base=""):
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="{base}index.html" aria-label="{esc(CFG['name'])} home">
-      <img src="{base}assets/logo-192.png" alt="" width="52" height="52">
+      <img src="{base}assets/logo-192.webp" alt="" width="52" height="52">
       <span class="brand-text" translate="no"><strong>{esc(CFG['name'])}</strong><small>{esc(CFG['short'])}</small></span>
     </a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
@@ -222,7 +223,7 @@ def footer(base=""):
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <img src="{base}assets/logo-192.png" alt="" width="56" height="56" loading="lazy">
+        <img src="{base}assets/logo-192.webp" alt="" width="56" height="56" loading="lazy">
         <div>
           <strong translate="no">{esc(CFG['name'])} ’{esc(CFG['year'][2:])}</strong>
           <span>{esc(CFG['theme'])}</span>
@@ -269,7 +270,7 @@ def made_by():
 
 
 def page_head(eyebrow, h1, lede, badges="", seal=True):
-    seal_html = '<img class="seal" src="assets/logo-192.png" alt="" width="88" height="88">' if seal else ""
+    seal_html = '<img class="seal" src="assets/logo-192.webp" alt="" width="88" height="88">' if seal else ""
     badges_html = f'<div class="badges">{badges}</div>' if badges else ""
     return f"""<header class="page-head band">
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
@@ -390,7 +391,7 @@ def build_home():
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-grain" aria-hidden="true"></div>
   <div class="wrap hero-inner" data-parallax>
-    <img class="hero-logo" src="assets/logo.png" alt="{esc(CFG['short'])} logo" width="240" height="240" fetchpriority="high">
+    <img class="hero-logo" src="assets/logo.webp" alt="{esc(CFG['short'])} logo" width="240" height="240" fetchpriority="high">
     <p class="presents">{esc(CFG['full_name'])} · {esc(CFG['year'])}</p>
     <h1 id="hero-title" class="split"><span class="the">The</span> Narratives<br>of Power</h1>
     <p class="deck">Behind every headline is a choice.</p>
@@ -627,7 +628,7 @@ def build_schedule():
 def build_404():
     main = f"""<section class="page-head" style="padding-bottom:var(--space)">
   <div class="wrap">
-    <img class="seal" src="assets/logo-192.png" alt="" width="88" height="88">
+    <img class="seal" src="assets/logo-192.webp" alt="" width="88" height="88">
     <p class="eyebrow">Error 404</p>
     <h1>This story was never printed.</h1>
     <p class="lede">The page you’re looking for doesn’t exist or has moved.</p>

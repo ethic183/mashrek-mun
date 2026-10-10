@@ -109,6 +109,21 @@
     Array.prototype.forEach.call(group.children, function (c, i) { c.style.setProperty("--i", i); });
   });
 
+  /* ---------- Instant page loads ----------
+     Fetch a page as soon as a visitor hovers or touches its link, so it opens from cache.
+     (Chrome and Edge also prerender via the speculation rules in <head>.) */
+  var warmed = {};
+  function warm(e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a || a.target === "_blank" || a.origin !== location.origin) return;
+    var url = a.href.split("#")[0];
+    if (url === location.href.split("#")[0] || warmed[url]) return;
+    warmed[url] = true;
+    try { fetch(url, { credentials: "same-origin", priority: "low" }).catch(function () {}); } catch (err) {}
+  }
+  document.addEventListener("pointerover", warm, { passive: true });
+  document.addEventListener("touchstart", warm, { passive: true });
+
   /* ---------- Reveal on scroll ---------- */
   var reveals = document.querySelectorAll(".reveal, .split, [data-stagger], hr.rule, .double-rule, .unveil, .p-track");
   if (!hasIO) {
@@ -118,7 +133,7 @@
       entries.forEach(function (entry) {
         if (entry.isIntersecting) { entry.target.classList.add("in"); ro.unobserve(entry.target); }
       });
-    }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+    }, { threshold: 0, rootMargin: "0px 0px 12% 0px" });   // start just before it scrolls into view
     reveals.forEach(function (el) {
       // Anything already on screen at load animates in straight away.
       if (el.getBoundingClientRect().top < window.innerHeight) {
