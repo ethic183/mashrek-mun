@@ -109,6 +109,7 @@ def head(title, description, path, base=""):
     canonical = f'<link rel="canonical" href="{esc(abs_url(path))}">' if SITE_URL else ""
     og_url = f'<meta property="og:url" content="{esc(abs_url(path))}">' if SITE_URL else ""
     return f"""<!doctype html>
+<!-- Website by {esc((CFG.get('credit') or {}).get('name', ''))} -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -117,6 +118,7 @@ def head(title, description, path, base=""):
   <script>document.documentElement.classList.add('js')</script>{intro}
   <title>{esc(full_title)}</title>
   <meta name="description" content="{esc(description)}">
+  <meta name="author" content="{esc((CFG.get('credit') or {}).get('name', ''))}">
   <meta name="theme-color" content="#0c1830">
   {canonical}
   <meta property="og:type" content="website">
@@ -258,6 +260,14 @@ def page(filename, title, description, active, main_html, extra_head=""):
     return filename
 
 
+def made_by():
+    cr = CFG.get("credit") or {}
+    if not cr.get("name"):
+        return ""
+    return (f'<a class="made-by" href="{esc(cr.get("url", "#"))}" target="_blank" rel="noopener" '
+            f'translate="no">Website by {esc(cr["name"])}</a>')
+
+
 def page_head(eyebrow, h1, lede, badges="", seal=True):
     seal_html = '<img class="seal" src="assets/logo-192.png" alt="" width="88" height="88">' if seal else ""
     badges_html = f'<div class="badges">{badges}</div>' if badges else ""
@@ -271,6 +281,7 @@ def page_head(eyebrow, h1, lede, badges="", seal=True):
     <p class="lede">{lede}</p>
     {badges_html}
   </div>
+  {made_by()}
 </header>
 <hr class="rule">"""
 
@@ -389,6 +400,7 @@ def build_home():
     </div>
   </div>
   <div class="hero-facts"><ul>{facts}</ul></div>
+  {made_by()}
   <button class="motion-toggle" type="button" aria-pressed="false" title="Pause motion"><span class="icon" aria-hidden="true">❚❚</span><span class="label sr-only">Pause motion</span></button>
 </section>
 
