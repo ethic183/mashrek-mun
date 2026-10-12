@@ -38,6 +38,8 @@ def load_config():
             problems.append(f"applications item {i + 1} needs a \"title\"")
         elif a.get("url") and not str(a["url"]).startswith(("https://", "http://")):
             problems.append(f'applications item {i + 1}: "url" must start with https://')
+        elif "open" in a and not isinstance(a["open"], bool):
+            problems.append(f'applications item {i + 1}: "open" must be true or false (no quotes)')
     for i, d in enumerate(cfg.get("schedule") or []):
         if not isinstance(d, dict) or not d.get("day") or not isinstance(d.get("events", []), list):
             problems.append(f'schedule item {i + 1} needs a "day" and an "events" list')
@@ -327,7 +329,7 @@ FLAGS = [("jo", "Jordan"), ("us", "United States"), ("cn", "China"), ("fr", "Fra
 
 
 def build_home():
-    open_apps = [a for a in CFG["applications"] if a.get("url")]
+    open_apps = apps_open()
     released = sum(1 for c in C if has_guide(c))
     venues = CFG["contact"].get("location") or []
     if isinstance(venues, str):
@@ -548,27 +550,119 @@ def build_committee(c):
     page(f"{c['slug']}.html", c["name"], desc, c["slug"], top + "\n" + body + "\n" + pager, extra)
 
 
+def form_url(url, embedded=False):
+    """Google Forms: always link to the live form (viewform), never a closed/edit/prefill view."""
+    u = url.split("?")[0].split("#")[0]
+    if "docs.google.com/forms/" in u:
+        u = u.rsplit("/", 1)[0] + "/viewform" if u.rsplit("/", 1)[-1] in ("closedform", "edit", "formResponse", "viewform") else u
+        return u + ("?embedded=true" if embedded else "")
+    return url
+
+
+def apps_open():
+    return [a for a in CFG["applications"] if a.get("url") and a.get("open", True)]
+
+
 def build_applications():
     apps = CFG["applications"]
     top = page_head("Take Part", "Applications",
                     "Every narrative needs its authors. Apply as a delegate and take up the pen.", seal=False)
-    if apps:
-        rows = []
-        for a in apps:
-            note = f'<span class="sub">{esc(a["note"])}</span>' if a.get("note") else ""
-            deadline = f'<span class="status">Deadline · {esc(a["deadline"])}</span>' if a.get("deadline") else ""
-            action = (f'<a class="btn" href="{esc(a["url"])}" target="_blank" rel="noopener">Apply <span aria-hidden="true">→</span></a>'
-                      if a.get("url") else '<span class="status">Opening soon</span>')
-            rows.append(f'<li><span class="title">{esc(a["title"])}{note}</span>'
-                        f'<span class="actions">{deadline}{action}</span></li>')
-        body = f'<ul class="link-list reveal">{"".join(rows)}</ul>'
-    else:
+    main = next((a for a in apps if a.get("url")), None)
+    if not main:
         body = pending("Applications", "Opening soon",
                        "<p>The delegate application form will be posted here as soon as it is released.</p>"
                        "<p>Check back soon, or reach the team using the contact details below.</p>")
+        page("applications.html", "Applications", f"Apply as a delegate to {CFG['full_name']} {CFG['year']}.",
+             "applications", top + f'\n<section><div class="wrap narrow">{body}</div></section>')
+        return
+
+    is_open = main.get("open", True)
+    url = form_url(main["url"])
+    venues = CFG["contact"].get("location") or []
+    deadline = (f'<li><span>Deadline</span><b>{esc(main["deadline"])}</b></li>' if main.get("deadline") else "")
+    status = ('<span class="apply-status open"><i class="live-dot" aria-hidden="true"></i>Applications open</span>'
+              if is_open else '<span class="apply-status"><i aria-hidden="true"></i>Opening soon</span>')
+    action = (f'<a class="btn light apply-go" href="{esc(url)}" target="_blank" rel="noopener">Apply now '
+              f'<span class="arr" aria-hidden="true">→</span></a>'
+              f'<p class="apply-small">Opens the official form in a new tab</p>'
+              if is_open else
+              '<span class="btn light is-disabled" aria-disabled="true">Form opens soon</span>'
+              '<p class="apply-small">The button goes live the moment applications open</p>')
+    note = esc(main.get("note") or "Choose your committees, tell us about your MUN experience, "
+                                   "and the Secretariat will assign your delegation.")
+    card = f"""<article class="apply-card reveal">
+  <div class="apply-main">
+    {status}
+    <p class="apply-kicker">{esc(CFG['short'])} · {esc(main['title'])}</p>
+    <h2>Take your seat<br>at the table.</h2>
+    <p class="apply-note">{note}</p>
+    <div class="apply-action">{action}</div>
+  </div>
+  <ul class="apply-facts">
+    <li><span>Theme</span><b>{esc(CFG['theme'])}</b></li>
+    <li><span>Committees</span><b>{len(C)} · Beginner to Expert</b></li>
+    <li><span>Conference</span><b>3 days · {len(venues) or 2} venues</b></li>
+    {''.join(f'<li><span>{esc(v.split(":")[0])}</span><b>{esc(v.split(":", 1)[1].strip() if ":" in v else v)}</b></li>' for v in venues)}
+    {deadline}
+  </ul>
+</article>"""
+
+    steps = [("Apply", "Fill in the delegate form with your details, experience and committee preferences."),
+             ("Allocation", "The Secretariat reviews every application and assigns your committee and country."),
+             ("Prepare", 'Read your committee&rsquo;s <a href="guides.html">study guide</a>, research your country '
+                         "and write your position.")]
+    steps_html = "".join(f'<li><span class="num">{n}</span><h3>{t}</h3><p>{d}</p></li>'
+                         for n, (t, d) in zip(("I", "II", "III"), steps))
+
+    tiers = []
+    for tier in ("Beginner", "Intermediate", "Expert", "Special"):
+        cs = [c for c in C if c["tier"] == tier]
+        if not cs:
+            continue
+        chips = "".join(f'<a class="pick" href="{c["slug"]}.html"><b translate="no">{esc(c["abbr"])}</b>'
+                        f'<span>{esc(c["name"])}</span></a>' for c in cs)
+        tiers.append(f'<div class="pick-tier"><p class="pick-level">{tier}</p><div class="pick-row">{chips}</div></div>')
+
+    embed = ""
+    if is_open:
+        embed = f"""
+<section class="apply-embed">
+  <div class="wrap narrow">
+    <div class="section-head reveal"><p class="eyebrow">Or stay right here</p><h2>Fill it in on this page.</h2></div>
+    <div class="embed-frame reveal" data-embed="{esc(form_url(main['url'], embedded=True))}">
+      <button class="btn" type="button">Show the form here <span class="arr" aria-hidden="true">↓</span></button>
+      <p class="apply-small">Same official form, loaded only when you ask for it.</p>
+    </div>
+  </div>
+</section>"""
+
+    more = [a for a in apps if a is not main]
+    more_html = ""
+    if more:
+        rows = []
+        for a in more:
+            go = (f'<a class="btn" href="{esc(form_url(a["url"]))}" target="_blank" rel="noopener">Apply <span aria-hidden="true">→</span></a>'
+                  if a.get("url") and a.get("open", True) else '<span class="status">Opening soon</span>')
+            rows.append(f'<li><span class="title">{esc(a["title"])}</span><span class="actions">{go}</span></li>')
+        more_html = f'<section><div class="wrap narrow"><ul class="link-list reveal">{"".join(rows)}</ul></div></section>'
+
+    body = f"""
+<section class="apply-hero"><div class="wrap">{card}</div></section>
+<section class="apply-how">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From application to the floor.</h2></div>
+    <ol class="apply-steps" data-stagger>{steps_html}</ol>
+  </div>
+</section>
+<section class="apply-pick">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="eyebrow">Before you apply</p><h2>Know your committees.</h2>
+      <p class="lede">You will rank your preferences on the form. Tap a committee to read what it covers.</p></div>
+    <div class="pick-grid reveal">{''.join(tiers)}</div>
+  </div>
+</section>{embed}{more_html}"""
     page("applications.html", "Applications",
-         f"Apply as a delegate to {CFG['full_name']} {CFG['year']}.",
-         "applications", top + f'\n<section><div class="wrap narrow">{body}</div></section>')
+         f"Apply as a delegate to {CFG['full_name']} {CFG['year']}.", "applications", top + body)
 
 
 def build_guides():

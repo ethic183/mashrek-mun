@@ -63,7 +63,10 @@ Empty fields are hidden automatically.
   { "title": "Delegate Application", "url": "https://forms.gle/…", "deadline": "15 October" }
 ]
 ```
-The home page status updates automatically (e.g. "2 open now").
+- `"open"`: `true` makes the **Apply now** button live; `false` shows "Form opens soon". Flip it the moment the
+  Google Form starts accepting responses (Google Form → Responses → *Accepting responses*), then run `python3 build.py`.
+- Any Google Forms link works (viewform, closedform, edit); the site always links to the live form.
+- The home page and the Applications page update automatically.
 
 ### Study guides from Word (.docx)
 Convert a topic brief written in the "MUN Topic Description Structure" format straight into its committee page:

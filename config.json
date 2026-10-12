@@ -19,7 +19,14 @@
     ]
   },
 
-  "applications": [],
+  "applications": [
+    {
+      "title": "Delegate Application",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSelp80yKu_g1ejs2U8gQXhuvWf3sw_e2fZ3fM9SoA2mA4MCmA/viewform",
+      "open": false,
+      "deadline": ""
+    }
+  ],
 
   "schedule": [],
 
