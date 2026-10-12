@@ -59,6 +59,11 @@ def load_config():
 CFG = load_config()
 
 SITE_URL = CFG.get("site_url", "").strip().rstrip("/")
+if os.environ.get("NETLIFY") == "true":
+    # On Netlify, use the address of this deploy: the live site (or custom domain) in production,
+    # and the preview's own address for pull-request previews.
+    SITE_URL = (os.environ.get("URL") if os.environ.get("CONTEXT") == "production"
+                else os.environ.get("DEPLOY_PRIME_URL") or os.environ.get("URL") or SITE_URL).rstrip("/")
 C = CFG["committees"]
 TIERS = ["Beginner", "Intermediate", "Expert", "Special"]
 FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700"
