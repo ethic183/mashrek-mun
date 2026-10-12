@@ -628,19 +628,6 @@ def build_applications():
                         f'<span>{esc(c["name"])}</span></a>' for c in cs)
         tiers.append(f'<div class="pick-tier"><p class="pick-level">{tier}</p><div class="pick-row">{chips}</div></div>')
 
-    embed = ""
-    if is_open:
-        embed = f"""
-<section class="apply-embed">
-  <div class="wrap narrow">
-    <div class="section-head reveal"><p class="eyebrow">Or stay right here</p><h2>Fill it in on this page.</h2></div>
-    <div class="embed-frame reveal" data-embed="{esc(form_url(main['url'], embedded=True))}">
-      <button class="btn" type="button">Show the form here <span class="arr" aria-hidden="true">↓</span></button>
-      <p class="apply-small">Same official form, loaded only when you ask for it.</p>
-    </div>
-  </div>
-</section>"""
-
     more = [a for a in apps if a is not main]
     more_html = ""
     if more:
@@ -665,7 +652,7 @@ def build_applications():
       <p class="lede">You will rank your preferences on the form. Tap a committee to read what it covers.</p></div>
     <div class="pick-grid reveal">{''.join(tiers)}</div>
   </div>
-</section>{embed}{more_html}"""
+</section>{more_html}"""
     page("applications.html", "Applications",
          f"Apply as a delegate to {CFG['full_name']} {CFG['year']}.", "applications", top + body)
 

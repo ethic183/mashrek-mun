@@ -1041,8 +1041,7 @@ h1, h2 { overflow-wrap: break-word; }
 .apply-facts span { display: block; font-family: var(--caps); font-weight: 600; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9fb0d6; margin-bottom: 4px; }
 .apply-facts b { font-family: var(--display); font-weight: 700; font-size: 19px; color: #fff; line-height: 1.3; }
 
-.apply-how, .apply-pick, .apply-embed { padding-top: var(--space); padding-bottom: 0; }
-.apply-embed { padding-bottom: var(--space); }
+.apply-how, .apply-pick { padding-top: var(--space); padding-bottom: 0; }
 .apply-pick { padding-bottom: var(--space); }
 .apply-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--ink); }
 .apply-steps li { padding: 34px clamp(18px, 2.4vw, 36px) 8px 0; }
@@ -1065,10 +1064,6 @@ h1, h2 { overflow-wrap: break-word; }
 .pick:hover { text-decoration: none; background: var(--navy); border-color: var(--navy); transform: translateY(-2px); }
 .pick:hover b, .pick:hover span { color: #fff; }
 
-.embed-frame { text-align: center; border: 1px solid var(--line); background: var(--paper); padding: clamp(36px, 5vw, 56px) 20px; }
-.embed-frame .apply-small { color: var(--muted); }
-.embed-frame.loaded { padding: 0; background: #fff; }
-.embed-frame iframe { display: block; width: 100%; height: min(1600px, 160vh); border: 0; }
 
 @media (max-width: 860px) {
   .apply-card { grid-template-columns: 1fr; }
@@ -1087,7 +1082,6 @@ h1, h2 { overflow-wrap: break-word; }
   .pick { width: 100%; }
 }
 .apply-pick .section-head .lede { margin-left: 0; }
-.apply-pick + .apply-embed { padding-top: 0; }
 
 /* ---------- Conference schedule ---------- */
 .day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 24px; flex-wrap: wrap; margin-bottom: 18px; }
