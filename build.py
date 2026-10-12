@@ -638,8 +638,31 @@ def build_applications():
             rows.append(f'<li><span class="title">{esc(a["title"])}</span><span class="actions">{go}</span></li>')
         more_html = f'<section><div class="wrap narrow"><ul class="link-list reveal">{"".join(rows)}</ul></div></section>'
 
+    inv = CFG.get("invitation") or {}
+    invite = ""
+    if inv.get("file"):
+        items = [("Conference dates", inv.get("dates")), ("Venues", " · ".join(v.split(":")[0] for v in venues) and
+                  "Mashrek International School &amp; The Ritz-Carlton, Amman"),
+                 ("Registration closes", inv.get("deadline")), ("Participation fee", inv.get("fee"))]
+        facts = "".join(f"<li><span>{k}</span><b>{v if k == 'Venues' else esc(v)}</b></li>" for k, v in items if v)
+        invite = f"""
+<section class="apply-invite">
+  <div class="wrap">
+    <div class="invite-card reveal">
+      <div class="invite-text">
+        <p class="eyebrow">The invitation</p>
+        <h2>A letter to parents.</h2>
+        <p>The Secretary General and Deputy Secretary General invite every student to take part in MMUN’26. Read the full letter for the details of the conference, registration and fee.</p>
+        <a class="btn" href="{esc(inv['file'])}" target="_blank" rel="noopener">Read the letter <span class="arr" aria-hidden="true">→</span></a>
+        <p class="apply-small">PDF</p>
+      </div>
+      <ul class="invite-facts">{facts}</ul>
+    </div>
+  </div>
+</section>"""
+
     body = f"""
-<section class="apply-hero"><div class="wrap">{card}</div></section>
+<section class="apply-hero"><div class="wrap">{card}</div></section>{invite}
 <section class="apply-how">
   <div class="wrap">
     <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From application to the floor.</h2></div>

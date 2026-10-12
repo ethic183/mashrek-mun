@@ -24,9 +24,16 @@
       "title": "Delegate Application",
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSelp80yKu_g1ejs2U8gQXhuvWf3sw_e2fZ3fM9SoA2mA4MCmA/viewform",
       "open": true,
-      "deadline": ""
+      "deadline": "20 October 2026"
     }
   ],
+
+  "invitation": {
+    "file": "assets/MMUN26-Invitation.pdf",
+    "dates": "19–21 November 2026",
+    "deadline": "20 October 2026",
+    "fee": "140 JOD per student"
+  },
 
   "schedule": [
     {

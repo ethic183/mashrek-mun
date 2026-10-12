@@ -1109,3 +1109,18 @@ h1, h2 { overflow-wrap: break-word; }
   .sched-table tbody th { font-size: 15px; }
   .sched-table .when, .sched-table.groups td { font-size: 14px; letter-spacing: .04em; white-space: normal; }
 }
+
+/* ---------- Invitation letter ---------- */
+.apply-invite { padding-top: var(--space); }
+.invite-card { display: grid; grid-template-columns: 1.2fr 1fr; border: 1px solid var(--line); background: var(--paper); }
+.invite-text { padding: clamp(28px, 4vw, 52px); }
+.invite-text h2 { margin: 6px 0 14px; font-size: clamp(28px, 3.4vw, 40px); }
+.invite-text p { color: var(--muted); }
+.invite-text .btn { margin-top: 10px; }
+.invite-text .apply-small { margin-top: 10px; color: var(--muted); }
+.invite-facts { list-style: none; margin: 0; padding: clamp(28px, 4vw, 52px); background: #fff; border-left: 1px solid var(--line); display: grid; align-content: center; }
+.invite-facts li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.invite-facts li:last-child { border-bottom: 0; }
+.invite-facts span { display: block; font-family: var(--caps); font-weight: 600; letter-spacing: .2em; text-transform: uppercase; font-size: 13px; color: var(--navy); }
+.invite-facts b { font-family: var(--display); font-size: 20px; color: var(--ink); }
+@media (max-width: 800px) { .invite-card { grid-template-columns: 1fr; } .invite-facts { border-left: 0; border-top: 1px solid var(--line); } }
