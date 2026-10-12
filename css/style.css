@@ -1088,3 +1088,30 @@ h1, h2 { overflow-wrap: break-word; }
 }
 .apply-pick .section-head .lede { margin-left: 0; }
 .apply-pick + .apply-embed { padding-top: 0; }
+
+/* ---------- Conference schedule ---------- */
+.day-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 24px; flex-wrap: wrap; margin-bottom: 18px; }
+.day-head .day-title { margin: 0; }
+.day-venue { margin: 0; font-family: var(--caps); font-weight: 600; letter-spacing: .2em; text-transform: uppercase; font-size: 14px; color: var(--navy); }
+.sched-wrap { overflow-x: auto; box-shadow: 0 0 0 1px var(--line); }
+.sched-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 18px; }
+.sched-table thead th { background: var(--navy-900); color: #fff; text-align: left; font-family: var(--caps); font-weight: 600; letter-spacing: .18em; text-transform: uppercase; font-size: 14px; padding: 16px 20px; vertical-align: bottom; }
+.sched-table thead th span { display: block; margin-top: 3px; letter-spacing: .12em; color: #aeb7c9; font-size: 13px; }
+.sched-table td, .sched-table tbody th { padding: 16px 20px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--muted); font-weight: 400; }
+.sched-table tbody th { color: var(--ink); font-family: var(--display); font-weight: 700; font-size: 17px; }
+.sched-table .when, .sched-table.groups td { font-family: var(--caps); font-weight: 600; letter-spacing: .1em; font-size: 16px; color: var(--navy); white-space: nowrap; }
+.sched-table .note { display: block; margin-top: 2px; font-family: var(--serif); font-weight: 400; font-size: 15px; font-style: italic; color: var(--muted); }
+.sched-table .k-break td, .sched-table .k-break th { background: var(--paper); }
+.sched-table .k-break th { font-weight: 500; font-style: italic; color: var(--muted); }
+.sched-table .k-key th { box-shadow: inset 3px 0 0 var(--red); }
+.sched-table .k-key td, .sched-table .k-key th { background: var(--navy-soft); }
+.sched-table .span { text-align: center; }
+.sched-table .all { display: block; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+@media (max-width: 640px) {
+  .sched-table { font-size: 16px; }
+  .sched-table thead th, .sched-table td, .sched-table tbody th { padding: 12px 10px; }
+  .sched-table thead th { font-size: 12px; letter-spacing: .1em; }
+  .sched-table thead th span { font-size: 11px; letter-spacing: .04em; }
+  .sched-table tbody th { font-size: 15px; }
+  .sched-table .when, .sched-table.groups td { font-size: 14px; letter-spacing: .04em; white-space: normal; }
+}

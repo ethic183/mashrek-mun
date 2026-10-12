@@ -711,11 +711,32 @@ def build_schedule():
     if sched:
         days = []
         for d in sched:
-            evs = "".join(f'<li><span class="when">{esc(e.get("time", ""))}</span>'
-                          f'<span><strong>{esc(e["title"])}</strong>'
-                          f'{"<span class=sub>" + esc(e["place"]) + "</span>" if e.get("place") else ""}</span></li>'
-                          for e in d.get("events", []))
-            days.append(f'<div class="day reveal"><h2 class="day-title">{esc(d["day"])}</h2><ul class="timeline">{evs}</ul></div>')
+            venue = f'<p class="day-venue">{esc(d["venue"])}</p>' if d.get("venue") else ""
+            head = f'<div class="day-head"><h2 class="day-title">{esc(d["day"])}</h2>{venue}</div>'
+            rows = []
+            if d.get("groups"):
+                g = d["groups"]
+                thead = (f'<thead><tr><th scope="col">Event</th>'
+                         f'<th scope="col"><b>Group A</b><span>{esc(g["A"])}</span></th>'
+                         f'<th scope="col"><b>Group B</b><span>{esc(g["B"])}</span></th></tr></thead>')
+                for ev in d["events"]:
+                    kind = esc(ev.get("kind", "session"))
+                    if ev.get("time"):
+                        rows.append(f'<tr class="k-{kind}"><th scope="row">{esc(ev["title"])}</th>'
+                                    f'<td colspan="2" class="span"><span class="all">All committees</span>{esc(ev["time"])}</td></tr>')
+                    else:
+                        rows.append(f'<tr class="k-{kind}"><th scope="row">{esc(ev["title"])}</th>'
+                                    f'<td>{esc(ev.get("a", ""))}</td><td>{esc(ev.get("b", ""))}</td></tr>')
+                table = f'<table class="sched-table groups">{thead}<tbody>{"".join(rows)}</tbody></table>'
+            else:
+                thead = '<thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Location</th></tr></thead>'
+                for ev in d["events"]:
+                    kind = esc(ev.get("kind", "session"))
+                    note = f'<span class="note">{esc(ev["note"])}</span>' if ev.get("note") else ""
+                    rows.append(f'<tr class="k-{kind}"><td class="when">{esc(ev.get("time", ""))}</td>'
+                                f'<th scope="row">{esc(ev["title"])}{note}</th><td>{esc(ev.get("place", "")) or "—"}</td></tr>')
+                table = f'<table class="sched-table">{thead}<tbody>{"".join(rows)}</tbody></table>'
+            days.append(f'<div class="day reveal">{head}<div class="sched-wrap">{table}</div></div>')
         body = "".join(days)
     else:
         body = pending("Schedule", "To be announced",
