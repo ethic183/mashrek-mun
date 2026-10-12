@@ -124,19 +124,6 @@
   document.addEventListener("pointerover", warm, { passive: true });
   document.addEventListener("touchstart", warm, { passive: true });
 
-  /* ---------- Application form: load the embedded form only when asked ---------- */
-  document.querySelectorAll("[data-embed]").forEach(function (box) {
-    var btn = box.querySelector("button");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      var f = document.createElement("iframe");
-      f.src = box.getAttribute("data-embed");
-      f.title = "Delegate application form";
-      f.loading = "eager";
-      box.innerHTML = ""; box.classList.add("loaded"); box.appendChild(f);
-    });
-  });
-
   /* ---------- Reveal on scroll ---------- */
   var reveals = document.querySelectorAll(".reveal, .split, [data-stagger], hr.rule, .double-rule, .unveil, .p-track");
   if (!hasIO) {
