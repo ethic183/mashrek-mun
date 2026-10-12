@@ -35,7 +35,9 @@
     "fee": "140 JOD per student"
   },
 
-  "schedule": [
+  "schedule": [],
+
+  "schedule_hidden": [
     {
       "day": "Day One",
       "venue": "Mashrek International School",
