@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ethic183.github.io/mashrek-mun/sitemap.xml
+Sitemap: https://mashrekmun.org/sitemap.xml

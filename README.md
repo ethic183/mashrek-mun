@@ -6,8 +6,9 @@ It's a fully static site: plain HTML, CSS and a small JavaScript file. It needs 
 
 ## Live site
 
-**https://ethic183.github.io/mashrek-mun/** (hosted free on GitHub Pages from the `main` branch of
-https://github.com/ethic183/mashrek-mun).
+**https://mashrekmun.org** (hosted on Netlify, which rebuilds and publishes every push to the `main` branch of
+https://github.com/ethic183/mashrek-mun). An older copy also stays on GitHub Pages at
+https://ethic183.github.io/mashrek-mun/; it points search engines to mashrekmun.org.
 
 ### Publishing an update
 1. Edit `config.json` (or add a guide), then rebuild:
