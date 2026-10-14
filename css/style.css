@@ -755,9 +755,9 @@ html:not(.js) .to-top { display: none; }
 .made-by {
   position: absolute; right: 10px; top: 50%; z-index: 2; writing-mode: vertical-rl; transform: translateY(-50%);
   font-family: var(--caps); font-size: 10px; letter-spacing: .32em; text-transform: uppercase; white-space: nowrap;
-  color: rgba(255,255,255,.13); transition: color .4s;
+  color: rgba(255,255,255,.07); transition: color .4s;
 }
-.made-by:hover, .made-by:focus-visible { color: rgba(255,255,255,.6); text-decoration: none; }
+.made-by:hover, .made-by:focus-visible { color: rgba(255,255,255,.45); text-decoration: none; }
 @media (max-width: 700px) { .made-by { right: 3px; font-size: 9px; letter-spacing: .26em; } }
 @media print { .made-by { display: none; } }
 

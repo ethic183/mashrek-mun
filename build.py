@@ -289,7 +289,6 @@ def page_head(eyebrow, h1, lede, badges="", seal=True):
     <p class="lede">{lede}</p>
     {badges_html}
   </div>
-  {made_by()}
 </header>
 <hr class="rule">"""
 
