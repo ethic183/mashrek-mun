@@ -69,6 +69,7 @@ TIERS = ["Beginner", "Intermediate", "Expert", "Special"]
 FONTS = ("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700"
          "&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400"
          "&family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400&display=swap")
+PHOTO_W, PHOTO_H = 480, 590
 STAR = '<span class="star" aria-hidden="true">✦</span>'
 
 
@@ -235,6 +236,7 @@ def footer(base=""):
           <strong translate="no">{esc(CFG['name'])} ’{esc(CFG['year'][2:])}</strong>
           <span>{esc(CFG['theme'])}</span>
         </div>
+        <img class="footer-photo" src="{base}assets/footer-photo.webp" alt="Two members of the Mashrek MUN team" width="{PHOTO_W}" height="{PHOTO_H}" loading="lazy">
       </div>
       <div>
         <h3>Contact us</h3>
