@@ -1127,3 +1127,6 @@ h1, h2 { overflow-wrap: break-word; }
 
 /* Hide the "Powered by Netlify" badge Netlify injects for visitors (the owner-only toolbar is untouched). */
 #nl-badge-frame { display: none !important; }
+
+/* Team photo under the footer brand */
+.footer-brand .footer-photo { grid-column: 1 / -1; width: min(100%, 210px); height: auto; margin-top: 22px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.3); object-fit: cover; }
