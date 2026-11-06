@@ -7,10 +7,10 @@
   "year": "2026",
   "short": "MMUN ’26",
   "theme": "The Narratives of Power",
-  "description": "Mashrek Model United Nations 2026. Official theme: The Narratives of Power. Committees, study guides, delegate applications and schedule.",
+  "description": "Mashrek Model United Nations 2026. Official theme: The Narratives of Power. Committees, study guides and schedule.",
 
   "contact": {
-    "email": "",
+    "email": "ahmad.khatib@mashrek.edu.jo",
     "instagram": "mmun.official",
     "phone": "",
     "location": [
@@ -19,14 +19,9 @@
     ]
   },
 
-  "applications": [
-    {
-      "title": "Delegate Application",
-      "url": "https://docs.google.com/forms/d/e/1FAIpQLSelp80yKu_g1ejs2U8gQXhuvWf3sw_e2fZ3fM9SoA2mA4MCmA/viewform",
-      "open": true,
-      "deadline": "20 October 2026"
-    }
-  ],
+  "_applications_help": "Applications are over. Set applications_closed to false and add the form back to \"applications\" to reopen them.",
+  "applications_closed": true,
+  "applications": [],
 
   "invitation": {
     "file": "assets/MMUN26-Invitation.pdf",
