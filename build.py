@@ -57,6 +57,7 @@ def load_config():
 
 
 CFG = load_config()
+CLOSED = bool(CFG.get("applications_closed"))
 
 SITE_URL = CFG.get("site_url", "").strip().rstrip("/")
 if os.environ.get("NETLIFY") == "true":
@@ -349,7 +350,7 @@ def build_home():
     facts = "".join(
         f"<li><b>{esc(v.split(':', 1)[0].strip())}</b>{esc(v.split(':', 1)[1].strip()) if ':' in v else ''}</li>"
         for v in venues)
-    facts += (f"<li><b>Delegates</b>{'Applications open' if open_apps else 'Applications opening soon'}</li>")
+    facts += (f"<li><b>Delegates</b>{'Applications closed' if CLOSED else 'Applications open' if open_apps else 'Applications opening soon'}</li>")
 
     one = "".join(f'<span class="fl"><img src="assets/flags/{code}.svg" width="44" height="33" alt="" loading="lazy" decoding="async">{esc(name)}</span>'
                   for code, name in FLAGS)
@@ -402,8 +403,7 @@ def build_home():
     <h1 id="hero-title" class="split"><span class="the">The</span> Narratives<br>of Power</h1>
     <p class="deck">Behind every headline is a choice.</p>
     <div class="btn-row">
-      <a class="btn light" href="applications.html">Delegate Applications <span class="arr" aria-hidden="true">→</span></a>
-      <a class="btn ghost light" href="#committees">Committees</a>
+      {'<a class="btn light" href="#committees">Committees</a>' if CLOSED else '<a class="btn light" href="applications.html">Delegate Applications <span class="arr" aria-hidden="true">→</span></a><a class="btn ghost light" href="#committees">Committees</a>'}
     </div>
   </div>
   <div class="hero-facts"><ul>{facts}</ul></div>
@@ -497,9 +497,10 @@ def build_home():
 
 <section class="cta">
   <div class="wrap narrow reveal">
-    <h2 class="split">{'Delegate applications are open.' if open_apps else 'Delegate applications open soon.'}</h2>
+    <h2 class="split">{'Delegate applications are over.' if CLOSED else 'Delegate applications are open.' if open_apps else 'Delegate applications open soon.'}</h2>
+    {support_note()}
     <div class="btn-row">
-      <a class="btn light" href="applications.html">Delegate Applications <span class="arr" aria-hidden="true">→</span></a>
+      {'<a class="btn light" href="applications.html">About the conference <span class="arr" aria-hidden="true">→</span></a>' if CLOSED else '<a class="btn light" href="applications.html">Delegate Applications <span class="arr" aria-hidden="true">→</span></a>'}
       <a class="btn ghost light" href="schedule.html">Schedule</a>
     </div>
   </div>
@@ -535,7 +536,7 @@ def build_committee(c):
         body = f'<div class="wrap">\n{content}\n</div>'
     else:
         dl = (f'<a class="btn" href="{esc(c["guide_url"])}" target="_blank" rel="noopener">Download study guide</a>'
-              if c.get("guide_url") else '<a class="btn" href="applications.html">Applications</a>')
+              if c.get("guide_url") else ('' if CLOSED else '<a class="btn" href="applications.html">Applications</a>'))
         body = f"""<section>
   <div class="wrap narrow">
     {pending("Topics &amp; Study Guide",
@@ -563,14 +564,106 @@ def form_url(url, embedded=False):
     return url
 
 
+def support_note():
+    """The 'applications are over' line, with the support address."""
+    email = CFG["contact"].get("email")
+    who = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
+    return f'<p class="cta-note">For support, please contact {who}.</p>' if CLOSED else ""
+
+
 def apps_open():
     return [a for a in CFG["applications"] if a.get("url") and a.get("open", True)]
+
+
+def build_applications_closed(top):
+    """Applications are over: keep the conference information, drop the form and every apply button."""
+    venues = CFG["contact"].get("location") or []
+    email = CFG["contact"].get("email")
+    action = (f'<a class="btn light apply-go" href="mailto:{esc(email)}">Contact support '
+              f'<span class="arr" aria-hidden="true">→</span></a>'
+              f'<p class="apply-small">{esc(email)}</p>') if email else ""
+    contact = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
+    card = f"""<article class="apply-card reveal">
+  <div class="apply-main">
+    <span class="apply-status"><i aria-hidden="true"></i>Applications closed</span>
+    <p class="apply-kicker">{esc(CFG['short'])} · Delegate Application</p>
+    <h2>Applications<br>are over.</h2>
+    <p class="apply-note">Thank you to everyone who applied. For support, please contact {contact}.</p>
+    <div class="apply-action">{action}</div>
+  </div>
+  <ul class="apply-facts">
+    <li><span>Theme</span><b>{esc(CFG['theme'])}</b></li>
+    <li><span>Committees</span><b>{len(C)} · Beginner to Expert</b></li>
+    <li><span>Conference</span><b>3 days · {len(venues) or 2} venues</b></li>
+    {''.join(f'<li><span>{esc(v.split(":")[0])}</span><b>{esc(v.split(":", 1)[1].strip() if ":" in v else v)}</b></li>' for v in venues)}
+  </ul>
+</article>"""
+
+    steps = [("Allocation", "The Secretariat reviews every application and assigns your committee and country."),
+             ("Prepare", 'Read your committee&rsquo;s <a href="guides.html">study guide</a>, research your country '
+                         "and write your position.")]
+    steps_html = "".join(f'<li><span class="num">{n}</span><h3>{t}</h3><p>{d}</p></li>'
+                         for n, (t, d) in zip(("I", "II"), steps))
+
+    tiers = []
+    for tier in ("Beginner", "Intermediate", "Expert", "Special"):
+        cs = [c for c in C if c["tier"] == tier]
+        if not cs:
+            continue
+        chips = "".join(f'<a class="pick" href="{c["slug"]}.html"><b translate="no">{esc(c["abbr"])}</b>'
+                        f'<span>{esc(c["name"])}</span></a>' for c in cs)
+        tiers.append(f'<div class="pick-tier"><p class="pick-level">{tier}</p><div class="pick-row">{chips}</div></div>')
+
+    inv = CFG.get("invitation") or {}
+    invite = ""
+    if inv.get("file"):
+        items = [("Conference dates", inv.get("dates")), ("Venues", None if not venues else
+                  "Mashrek International School &amp; The Ritz-Carlton, Amman"),
+                 ("Participation fee", inv.get("fee"))]
+        facts = "".join(f"<li><span>{k}</span><b>{v if k == 'Venues' else esc(v)}</b></li>" for k, v in items if v)
+        invite = f"""
+<section class="apply-invite">
+  <div class="wrap">
+    <div class="invite-card reveal">
+      <div class="invite-text">
+        <p class="eyebrow">The invitation</p>
+        <h2>A letter to parents.</h2>
+        <p>The Secretary General and Deputy Secretary General invited every student to take part in MMUN’26. Read the full letter for the details of the conference and fee.</p>
+        <a class="btn" href="{esc(inv['file'])}" target="_blank" rel="noopener">Read the letter <span class="arr" aria-hidden="true">→</span></a>
+        <p class="apply-small">PDF</p>
+      </div>
+      <ul class="invite-facts">{facts}</ul>
+    </div>
+  </div>
+</section>"""
+
+    body = f"""
+<section class="apply-hero"><div class="wrap">{card}</div></section>{invite}
+<section class="apply-how">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From application to the floor.</h2></div>
+    <ol class="apply-steps" data-stagger>{steps_html}</ol>
+  </div>
+</section>
+<section class="apply-pick">
+  <div class="wrap">
+    <div class="section-head reveal"><p class="eyebrow">The committees</p><h2>Know your committees.</h2>
+      <p class="lede">Tap a committee to read what it covers.</p></div>
+    <div class="pick-grid reveal">{''.join(tiers)}</div>
+  </div>
+</section>"""
+    page("applications.html", "Applications",
+         f"Applications for {CFG['full_name']} {CFG['year']} are closed. Conference information and support contact.",
+         "applications", top + body)
 
 
 def build_applications():
     apps = CFG["applications"]
     top = page_head("Take Part", "Applications",
-                    "Every narrative needs its authors. Apply as a delegate and take up the pen.", seal=False)
+                    "Every narrative needs its authors." if CLOSED else "Every narrative needs its authors. Apply as a delegate and take up the pen.", seal=False)
+    if CLOSED:
+        build_applications_closed(top)
+        return
     main = next((a for a in apps if a.get("url")), None)
     if not main:
         body = pending("Applications", "Opening soon",

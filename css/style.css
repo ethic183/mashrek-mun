@@ -457,6 +457,8 @@ a.status:hover { text-decoration: none; background: var(--navy-800); color: #fff
 .cta h2 { position: relative; font-size: clamp(36px, 5vw, 64px); font-weight: 900; color: #fff; margin: 0 auto 40px; line-height: 1.08; max-width: 820px; }
 .cta h2 em { font-weight: 400; color: #b8c6e8; }
 .cta p { position: relative; color: var(--on-dark-muted); font-size: 21px; margin: 0 auto 40px; }
+.cta .cta-note a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.apply-note a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .cta .btn-row { position: relative; }
 
 /* ==========================================================
