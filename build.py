@@ -210,10 +210,7 @@ def contact_line(label, value, href=None):
 
 def footer(base=""):
     ct = CFG["contact"]
-    emails = ct.get("email") or []
-    if isinstance(emails, str):
-        emails = [emails]
-    emails = [e.strip() for e in emails if e and e.strip()]
+    emails = contact_emails()
     ig = ct.get("instagram", "").lstrip("@").strip()
     lines = "".join([
         "".join(contact_line("Email", e, f"mailto:{e}") for e in emails),
@@ -568,10 +565,22 @@ def form_url(url, embedded=False):
     return url
 
 
+def contact_emails():
+    """The contact address(es) from config.json, as a list (a single string also works)."""
+    e = CFG["contact"].get("email") or []
+    return [x.strip() for x in ([e] if isinstance(e, str) else e) if x and x.strip()]
+
+
+def emails_html(emails):
+    """'a', 'a or b', 'a, b or c', each one clickable."""
+    links = [f'<a href="mailto:{esc(e)}">{esc(e)}</a>' for e in emails]
+    return links[0] if len(links) == 1 else ", ".join(links[:-1]) + " or " + links[-1]
+
+
 def support_note():
     """The 'applications are over' line, with the support address."""
-    email = CFG["contact"].get("email")
-    who = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
+    emails = contact_emails()
+    who = emails_html(emails) if emails else "the Secretariat"
     return f'<p class="cta-note">For support, please contact {who}.</p>' if CLOSED else ""
 
 
@@ -582,11 +591,11 @@ def apps_open():
 def build_applications_closed(top):
     """Applications are over: keep the conference information, drop the form and every apply button."""
     venues = CFG["contact"].get("location") or []
-    email = CFG["contact"].get("email")
-    action = (f'<a class="btn light apply-go" href="mailto:{esc(email)}">Contact support '
+    emails = contact_emails()
+    action = (f'<a class="btn light apply-go" href="mailto:{esc(",".join(emails))}">Contact support '
               f'<span class="arr" aria-hidden="true">→</span></a>'
-              f'<p class="apply-small">{esc(email)}</p>') if email else ""
-    contact = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
+              f'<p class="apply-small">{esc(" · ".join(emails))}</p>') if emails else ""
+    contact = emails_html(emails) if emails else "the Secretariat"
     card = f"""<article class="apply-card reveal">
   <div class="apply-main">
     <span class="apply-status"><i aria-hidden="true"></i>Applications closed</span>
