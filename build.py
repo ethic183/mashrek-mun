@@ -567,8 +567,9 @@ def form_url(url, embedded=False):
 def support_note():
     """The 'applications are over' line, with the support address."""
     email = CFG["contact"].get("email")
-    who = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
-    return f'<p class="cta-note">For support, please contact {who}.</p>' if CLOSED else ""
+    if not (CLOSED and email):
+        return ""
+    return f'<p class="cta-note">For support, please contact <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
 
 
 def apps_open():
@@ -582,13 +583,13 @@ def build_applications_closed(top):
     action = (f'<a class="btn light apply-go" href="mailto:{esc(email)}">Contact support '
               f'<span class="arr" aria-hidden="true">→</span></a>'
               f'<p class="apply-small">{esc(email)}</p>') if email else ""
-    contact = (f'<a href="mailto:{esc(email)}">{esc(email)}</a>' if email else "the Secretariat")
+    support = (f' For support, please contact <a href="mailto:{esc(email)}">{esc(email)}</a>.' if email else "")
     card = f"""<article class="apply-card reveal">
   <div class="apply-main">
     <span class="apply-status"><i aria-hidden="true"></i>Applications closed</span>
     <p class="apply-kicker">{esc(CFG['short'])} · Delegate Application</p>
     <h2>Applications<br>are over.</h2>
-    <p class="apply-note">Thank you to everyone who applied. For support, please contact {contact}.</p>
+    <p class="apply-note">Thank you to everyone who applied.{support}</p>
     <div class="apply-action">{action}</div>
   </div>
   <ul class="apply-facts">
@@ -653,7 +654,7 @@ def build_applications_closed(top):
   </div>
 </section>"""
     page("applications.html", "Applications",
-         f"Applications for {CFG['full_name']} {CFG['year']} are closed. Conference information and support contact.",
+         f"Applications for {CFG['full_name']} {CFG['year']} are closed. Conference information.",
          "applications", top + body)
 
 
