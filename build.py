@@ -210,9 +210,13 @@ def contact_line(label, value, href=None):
 
 def footer(base=""):
     ct = CFG["contact"]
+    emails = ct.get("email") or []
+    if isinstance(emails, str):
+        emails = [emails]
+    emails = [e.strip() for e in emails if e and e.strip()]
     ig = ct.get("instagram", "").lstrip("@").strip()
     lines = "".join([
-        contact_line("Email", ct.get("email"), f"mailto:{ct.get('email')}"),
+        "".join(contact_line("Email", e, f"mailto:{e}") for e in emails),
         contact_line("Phone", ct.get("phone"), "tel:" + ct.get("phone", "").replace(" ", "")),
     ])
     venues = ct.get("location") or []
@@ -224,7 +228,7 @@ def footer(base=""):
     ig_btn = (f'<a class="ig-btn" href="https://www.instagram.com/{esc(ig)}/" target="_blank" rel="noopener">'
               f'<img src="https://cdn.simpleicons.org/instagram/ffffff" alt="" width="18" height="18" loading="lazy">'
               f'Follow @{esc(ig)}</a>') if ig else ""
-    if not (ct.get("email") or ig or ct.get("phone")):
+    if not (emails or ig or ct.get("phone")):
         lines += '<p class="footer-note">Email and social channels will be announced shortly.</p>'
     return f"""
 <footer class="site-footer" id="contact">
